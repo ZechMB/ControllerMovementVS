@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36930.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControllerMovementVS", "ControllerMovementVS\ControllerMovementVS.csproj", "{9C211CD1-9486-48B9-ABA2-C246DE0E43ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CakeBuild", "ZZCakeBuild\CakeBuild.csproj", "{C9CF5B48-4852-42A1-BD9C-D11EE24436FC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9C211CD1-9486-48B9-ABA2-C246DE0E43ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C211CD1-9486-48B9-ABA2-C246DE0E43ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C211CD1-9486-48B9-ABA2-C246DE0E43ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C211CD1-9486-48B9-ABA2-C246DE0E43ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9CF5B48-4852-42A1-BD9C-D11EE24436FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9CF5B48-4852-42A1-BD9C-D11EE24436FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9CF5B48-4852-42A1-BD9C-D11EE24436FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9CF5B48-4852-42A1-BD9C-D11EE24436FC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D0E18E06-8ED0-422C-A62A-BF6DFD270F2E}
+	EndGlobalSection
+EndGlobal

@@ -1,8 +1,13 @@
 ﻿using AnalogMovementVS;
+using ImGuiNET;
+using Newtonsoft.Json.Linq;
 using SDL3;
 using System;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.MathTools;
+using VSImGui;
+using VSImGui.API;
 
 namespace ControllerMovementVS
 {
@@ -10,11 +15,13 @@ namespace ControllerMovementVS
     {
         internal bool sdlActivated = false;
         private bool initialized = false;
-        private ICoreClientAPI? capi;
-        private AnalogMovement? am;
-        private static Config? config;
+        internal ICoreClientAPI? capi;
+        internal AnalogMovement? am;
+        //private static Config? config;
         private long tickListenerId = 0;
         private long tickListenerId2 = 0;
+        private ConfigLibHelper? configLibhelper;
+        internal Config? config;
 
         public override void StartClientSide(ICoreClientAPI api)
         {
@@ -28,7 +35,14 @@ namespace ControllerMovementVS
                 {
                     Mod.Logger.Notification("sdl init good");
                     sdlActivated = true;
-                    TryToLoadConfig();
+                    if (api.ModLoader.IsModEnabled("configlib"))
+                    {
+                        configLibhelper = new(api, this);
+                    }
+                    else
+                    {
+                        ConfigLoader.TryToLoadConfig(api, this);
+                    }
                 }
                 else
                 {
@@ -42,6 +56,7 @@ namespace ControllerMovementVS
             }
         }
 
+
         //can't be called until entitycontrols is set
         internal void Init()
         {
@@ -52,8 +67,8 @@ namespace ControllerMovementVS
                 {
                     if (config is not null)
                     {
-                        am = new AnalogMovement(capi, config, this);
-                        ControllerHelper.SetupGamePad(am, this);
+                        am = new AnalogMovement(capi, this);
+                        ControllerHelper.SetupNewGamePad(am, this);
                     }
                 }
             }
@@ -80,33 +95,6 @@ namespace ControllerMovementVS
             if (am is not null)
             {
                 //ControllerHelper.SetupGamePad(am, this);
-            }
-        }
-
-        private void TryToLoadConfig()
-        {
-            try
-            {
-                if (capi is not null)
-                {
-                    config = capi.LoadModConfig<Config>("ControllerMovementVS.json");
-                    if (config == null)
-                    {
-                        config = new Config();
-                    }
-                    capi.StoreModConfig<Config>(config, "ControllerMovementVS.json");
-                }
-            }
-            catch (Exception e)
-            {
-                //Couldn't load the mod config... Create a new one with default settings, but don't save it.
-                Mod.Logger.Error("Could not load config! Loading default settings instead.");
-                Mod.Logger.Error(e);
-                config = new Config();
-            }
-            if (config is not null && config.DeadZone > 1f)
-            {
-                Mod.Logger.Warning("deadzone is set higher than expected max input of 1.0");
             }
         }
 

@@ -12,6 +12,10 @@
       <HintPath>..\..\AnalogMovementVS\Releases\analogmovementvs\AnalogMovementVS.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="configlib">
+      <HintPath>..\..\0notmine\vsmod_configlib\release\configlib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="VintagestoryAPI">
       <HintPath>$(VINTAGE_STORY)/VintagestoryAPI.dll</HintPath>
       <Private>false</Private>
@@ -68,6 +72,9 @@
 
 <ItemGroup>
   <PackageReference Include="SDL3-CS" Version="3.4.2" />
+  <PackageReference Include="VSImGui" Version="0.0.6">
+    <ExcludeAssets>runtime</ExcludeAssets>
+  </PackageReference>
 </ItemGroup>
 
 <ItemGroup>

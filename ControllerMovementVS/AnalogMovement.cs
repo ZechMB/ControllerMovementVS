@@ -8,13 +8,11 @@ namespace ControllerMovementVS
     internal class AnalogMovement
     {
         readonly ICoreClientAPI capi;
-        readonly Config config;
-        readonly Mod Mod;
-        internal AnalogMovement(ICoreClientAPI capi, Config config, ModSystem mod)
+        readonly ControllerMovementVSModSystem mod;
+        internal AnalogMovement(ICoreClientAPI capi, ControllerMovementVSModSystem mod)
         {
             this.capi = capi;
-            this.config = config;
-            Mod = mod.Mod;
+            this.mod = mod;
         }
 
         float moveX = 0;
@@ -23,8 +21,10 @@ namespace ControllerMovementVS
 
         internal void ConsumeInputs()
         {
-            if (capi.World.Player.Entity.Controls is EntityControlsAMfVS am && am.IsGameReadyForInput)
+            if (capi.World.Player.Entity.Controls is EntityControlsAMfVS am && am.IsGameReadyForInput && mod.config is not null)
             {
+                Config config = mod.config;
+
                 moveX = ControllerHelper.rawX / -32767f;
                 moveY = ControllerHelper.rawY / -32767f;
 

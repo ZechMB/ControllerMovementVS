@@ -1,13 +1,8 @@
 ﻿using AnalogMovementVS;
-using ImGuiNET;
-using Newtonsoft.Json.Linq;
 using SDL3;
 using System;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.MathTools;
-using VSImGui;
-using VSImGui.API;
 
 namespace ControllerMovementVS
 {

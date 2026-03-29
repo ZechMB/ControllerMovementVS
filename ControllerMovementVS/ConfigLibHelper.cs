@@ -23,7 +23,7 @@ namespace ControllerMovementVS
             {
                 if (buttons.Save) SaveConfig();
                 if (buttons.Restore) LoadConfig();
-                if (buttons.Defaults) setDefault();
+                if (buttons.Defaults) SetDefault();
                 if (buttons.Reload) SaveConfig();
                 if (mod.config is not null) Edit(api, mod.config, id);
             });
@@ -33,12 +33,15 @@ namespace ControllerMovementVS
         //int item_highlighted_idx = -1;
         bool autoSprint = true;
         float deadzone = 0f;
+        bool LookUsingRightStick = false;
+        bool SwapLeftRightSticks = false;
+        float LookSensitivityHorizontal = 0f;
+        float LookSensitivityVertical = 0f;
 
         private void Edit(ICoreAPI api, Config config, string id)
         {
             //keep polling in case the game is paused so we register if a controller connects
             if (mod.am is not null && mod.capi is not null && mod.capi.IsGamePaused) ControllerHelper.PollEvents(mod.am, mod);
-
 
             //bool item_highlight = false;
 
@@ -52,7 +55,7 @@ namespace ControllerMovementVS
                     {
                         gamepadSelectedIdx = n;
                         config.GamepadIndex = n;
-                        mod.Mod.Logger.Notification("choosing gamepad: " + n);
+                        mod.Mod.Logger.Notification("selected gamepad: " + n);
                     }
                     //if (item_highlight && ImGui.IsItemHovered())
                         //item_highlighted_idx = n;
@@ -63,9 +66,36 @@ namespace ControllerMovementVS
                 }
                 ImGui.EndListBox();
             }
-            //ImGui.NewLine();
+            
             ImGui.Checkbox("Auto sprint", ref autoSprint);
             ImGui.DragFloat("Deadzone", ref deadzone, 0.01f, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
+            ImGui.NewLine();
+            ImGui.Checkbox("SwapLeftRightSticks", ref SwapLeftRightSticks);
+            ImGui.Checkbox("LookUsingRightStick", ref LookUsingRightStick);
+            ImGui.DragFloat("LookSensitivityHorizontal", ref LookSensitivityHorizontal, 0.01f, 0.0f, 10.0f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
+            ImGui.DragFloat("LookSensitivityVertical", ref LookSensitivityVertical, 0.01f, 0.0f, 10.0f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
+        }
+               
+        private void LoadConfig()
+        {
+            ConfigLoader.TryToLoadConfig(api, mod);
+            CopyConfigToThis();
+
+            if (mod.am is not null)
+            {
+                ControllerHelper.setGamepad(mod.am, gamepadSelectedIdx);
+            }            
+        }
+
+        private void SetDefault()
+        {
+            mod.config = new();
+            CopyConfigToThis();
+
+            if (mod.am is not null)
+            {
+                ControllerHelper.setGamepad(mod.am, gamepadSelectedIdx);
+            }
         }
 
         private void SaveConfig()
@@ -79,34 +109,25 @@ namespace ControllerMovementVS
                 mod.config.AutoSprint = autoSprint;
                 mod.config.GamepadIndex = gamepadSelectedIdx;
                 mod.config.DeadZone = deadzone;
+                mod.config.LookUsingRightStick = LookUsingRightStick;
+                mod.config.SwapLeftRightSticks = SwapLeftRightSticks;
+                mod.config.LookSensitivityHorizontal = LookSensitivityHorizontal;
+                mod.config.LookSensitivityVertical = LookSensitivityVertical;
                 api.StoreModConfig<Config>(mod.config, "ControllerMovementVS.json");
             }
         }
 
-        private void LoadConfig()
+        private void CopyConfigToThis()
         {
-            ConfigLoader.TryToLoadConfig(api, mod);
             if (mod.config is not null)
-            {                         
+            {
                 autoSprint = mod.config.AutoSprint;
                 deadzone = mod.config.DeadZone;
                 gamepadSelectedIdx = mod.config.GamepadIndex;
-                if (mod.am is not null)
-                {
-                    ControllerHelper.setGamepad(mod.am, gamepadSelectedIdx);
-                }
-            }
-        }
-
-        private void setDefault()
-        {
-            mod.config = new();
-            autoSprint = mod.config.AutoSprint;
-            deadzone = mod.config.DeadZone;
-            gamepadSelectedIdx = mod.config.GamepadIndex;
-            if (mod.am is not null)
-            {
-                ControllerHelper.setGamepad(mod.am, gamepadSelectedIdx);
+                LookUsingRightStick = mod.config.LookUsingRightStick;
+                SwapLeftRightSticks = mod.config.SwapLeftRightSticks;
+                LookSensitivityHorizontal = mod.config.LookSensitivityHorizontal;
+                LookSensitivityVertical = mod.config.LookSensitivityVertical;
             }
         }
     }

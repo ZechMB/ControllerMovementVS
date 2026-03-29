@@ -1,7 +1,6 @@
 ﻿using AnalogMovementVS;
 using System;
 using Vintagestory.API.Client;
-using Vintagestory.API.Common;
 
 namespace ControllerMovementVS
 {
@@ -17,26 +16,65 @@ namespace ControllerMovementVS
 
         float moveX = 0;
         float moveY = 0;
+        float lookX = 0;
+        float lookY = 0;
         internal nint? gamepad;
 
         internal void ConsumeInputs()
         {
+            float deadzone = 0;
+            if (mod.config is not null) deadzone = mod.config.DeadZone;
+
+            //looking
+            if (mod.config is not null && mod.config.LookUsingRightStick)
+            {
+                if (mod.config.SwapLeftRightSticks)
+                {
+                    lookX = ControllerHelper.leftX;
+                    lookY = ControllerHelper.leftY;
+                }
+                else
+                {
+                    lookX = ControllerHelper.rightX;
+                    lookY = ControllerHelper.rightY;
+                }
+                lookX = lookX / -32767f;
+                lookY = lookY / 32767f;
+                lookX = (Math.Abs(lookX) > deadzone) ? lookX : 0;
+                lookY = (Math.Abs(lookY) > deadzone) ? lookY : 0;
+                lookX *= mod.config.LookSensitivityHorizontal * .08f;
+                lookY *= mod.config.LookSensitivityVertical * .08f;
+                capi.World.Player.CameraYaw += lookX;
+                capi.World.Player.Entity.Pos.Pitch += lookY;
+                //mod.Mod.Logger.Notification("camy " + capi.World.Player.CameraPitch);
+                //mod.Mod.Logger.Notification("looky " + lookY);
+            }
+
+            //moving
             if (capi.World.Player.Entity.Controls is EntityControlsAMfVS am && am.IsGameReadyForInput && mod.config is not null)
             {
-                Config config = mod.config;
+                if (mod.config.SwapLeftRightSticks)
+                {
+                    moveX = ControllerHelper.rightX;
+                    moveY = ControllerHelper.rightY;
+                }
+                else
+                {
+                    moveX = ControllerHelper.leftX;
+                    moveY = ControllerHelper.leftY;
+                }
+                moveX = moveX / -32767f;
+                moveY = moveY / -32767f;
 
-                moveX = ControllerHelper.rawX / -32767f;
-                moveY = ControllerHelper.rawY / -32767f;
-
-                moveX = (Math.Abs(moveX) > config.DeadZone) ? moveX : 0;
-                moveY = (Math.Abs(moveY) > config.DeadZone) ? moveY : 0;
+                moveX = (Math.Abs(moveX) > deadzone) ? moveX : 0;
+                moveY = (Math.Abs(moveY) > deadzone) ? moveY : 0;
 
                 //Mod.Logger.Notification("gamepad = " + gamepad);
                 //Mod.Logger.Notification("readingx " + moveX);
                 //Mod.Logger.Notification("readingy " + moveY);
 
                 // Update position
-                if (config.AutoSprint) AutoSprint(am);
+                if (mod.config.AutoSprint) AutoSprint(am);
                 else
                 {
                     am.amForwardBackward = moveY;

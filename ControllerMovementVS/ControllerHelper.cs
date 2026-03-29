@@ -15,8 +15,10 @@ namespace ControllerMovementVS
 
         internal static uint[]? gamepads;
         public static List<string> gamepadNames = new List<string>();
-        internal static short rawX = 0;
-        internal static short rawY = 0;
+        internal static short leftX = 0;
+        internal static short leftY = 0;
+        internal static short rightX = 0;
+        internal static short rightY = 0;
 
         internal static int getGamepads()
         {
@@ -74,8 +76,10 @@ namespace ControllerMovementVS
                     {
                         if (am.gamepad is not null)
                         {
-                            rawX = SDL.GetGamepadAxis((nint)am.gamepad, SDL.GamepadAxis.LeftX);
-                            rawY = SDL.GetGamepadAxis((nint)am.gamepad, SDL.GamepadAxis.LeftY);
+                            leftX = SDL.GetGamepadAxis((nint)am.gamepad, SDL.GamepadAxis.LeftX);
+                            leftY = SDL.GetGamepadAxis((nint)am.gamepad, SDL.GamepadAxis.LeftY);
+                            rightX = SDL.GetGamepadAxis((nint)am.gamepad, SDL.GamepadAxis.RightX);
+                            rightY = SDL.GetGamepadAxis((nint)am.gamepad, SDL.GamepadAxis.RightY);
                         }
                     }
                     else if (e.Type == (uint)SDL.EventType.GamepadAdded)

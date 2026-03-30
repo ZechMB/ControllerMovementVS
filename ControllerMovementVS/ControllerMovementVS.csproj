@@ -81,6 +81,12 @@
   <None Update="native\SDL3.dll">
     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
   </None>
+  <None Update="native\SDL3.dylib">
+    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+  </None>
+  <None Update="native\SDL3.so">
+    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+  </None>
   <None Update="SDL3-CS.dll">
     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
   </None>

@@ -1,3 +1,15 @@
 {
-    "hello": "hello world!"
+  "SelectGamepad": "Select gamepad",
+  "AutoSprint": "Auto sprint",
+  "AutoSprintToolTip": "Auto transition from walking to running when stick is more than half pushed",
+  "Deadzone": "Deadzone",
+  "DeadzoneToolTip": "Deadzone where the stick movements aren't registered",
+  "SwapLeftRightSticks": "Swap left & right sticks",
+  "SwapLeftRightSticksToolTip": "Walk with right stick and look with left stick",
+  "LookUsingRightStick": "Look using right stick",
+  "LookUsingRightStickToolTip": "Enable/disable moving the camera with right stick",
+  "LookSensitivityHorizontal": "Look sensitivity horizontal",
+  "LookSensitivityHorizontalToolTip": "Multiplier for horizontal turn speed",
+  "LookSensitivityVertical": "Look sensitivity vertical",
+  "LookSensitivityVerticalToolTip": "Multiplier for vertical turn speed"
 }

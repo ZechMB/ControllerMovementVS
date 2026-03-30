@@ -1,16 +1,19 @@
 ﻿using ConfigLib;
 using ImGuiNET;
+using System.Numerics;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 
 namespace ControllerMovementVS.config
 {
     internal class ConfigLibHelper
     {
-        const string Modid = "ControllerMovementVS";
+        //const string modid = "ControllerMovementVS";
+        const string modid = "controllermovementvs";
         readonly ICoreAPI api;
         readonly ControllerMovementVSModSystem mod;
 
-        //private const string categorycontroller = $"{Modid}:Config.Category.Crafting"; Lang.Get(categorycontroller)
+        //private const string categorycontroller = $"{modid}:Config.Category.Crafting"; Lang.Get(categorycontroller);
 
         public ConfigLibHelper(ICoreAPI api, ControllerMovementVSModSystem modSystem)
         {
@@ -18,7 +21,7 @@ namespace ControllerMovementVS.config
             mod = modSystem;
             LoadConfig();
             
-            api.ModLoader.GetModSystem<ConfigLibModSystem>().RegisterCustomConfig(Modid, (id, buttons) =>
+            api.ModLoader.GetModSystem<ConfigLibModSystem>().RegisterCustomConfig(modid, (id, buttons) =>
             {
                 if (buttons.Save) SaveConfig();
                 if (buttons.Restore) LoadConfig();
@@ -32,10 +35,10 @@ namespace ControllerMovementVS.config
         //int item_highlighted_idx = -1;
         bool autoSprint = true;
         float deadzone = 0f;
-        bool LookUsingRightStick = false;
-        bool SwapLeftRightSticks = false;
-        float LookSensitivityHorizontal = 0f;
-        float LookSensitivityVertical = 0f;
+        bool lookUsingRightStick = false;
+        bool swapLeftRightSticks = false;
+        float lookSensitivityHorizontal = 0f;
+        float lookSensitivityVertical = 0f;
 
         private void Edit(ICoreAPI api, Config config, string id)
         {
@@ -44,8 +47,8 @@ namespace ControllerMovementVS.config
 
             //bool item_highlight = false;
 
-            ImGui.TextWrapped("select gamepad:");
-            if (ImGui.BeginListBox(""))
+            ImGui.TextWrapped(Lang.Get($"{modid}:SelectGamepad") + ":");
+            if (ImGui.BeginListBox("", new Vector2(-1f, 4 * ImGui.GetTextLineHeightWithSpacing())))
             {
                 for (int n = 0; n < ControllerHelper.gamepadNames.Count; n++)
                 {
@@ -65,14 +68,20 @@ namespace ControllerMovementVS.config
                 }
                 ImGui.EndListBox();
             }
-            
-            ImGui.Checkbox("Auto sprint", ref autoSprint);
-            ImGui.DragFloat("Deadzone", ref deadzone, 0.01f, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
+
+            ImGui.Checkbox(Lang.Get($"{modid}:AutoSprint"), ref autoSprint);
+            ImGui.SetItemTooltip(Lang.Get($"{modid}:AutoSprintToolTip"));
+            ImGui.DragFloat(Lang.Get($"{modid}:Deadzone"), ref deadzone, 0.01f, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
+            ImGui.SetItemTooltip(Lang.Get($"{modid}:DeadzoneToolTip"));
             ImGui.NewLine();
-            ImGui.Checkbox("SwapLeftRightSticks", ref SwapLeftRightSticks);
-            ImGui.Checkbox("LookUsingRightStick", ref LookUsingRightStick);
-            ImGui.DragFloat("LookSensitivityHorizontal", ref LookSensitivityHorizontal, 0.01f, 0.0f, 10.0f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
-            ImGui.DragFloat("LookSensitivityVertical", ref LookSensitivityVertical, 0.01f, 0.0f, 10.0f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
+            ImGui.Checkbox(Lang.Get($"{modid}:SwapLeftRightSticks"), ref swapLeftRightSticks);
+            ImGui.SetItemTooltip(Lang.Get($"{modid}:SwapLeftRightSticksToolTip"));
+            ImGui.Checkbox(Lang.Get($"{modid}:LookUsingRightStick"), ref lookUsingRightStick);
+            ImGui.SetItemTooltip(Lang.Get($"{modid}:LookUsingRightStickToolTip"));
+            ImGui.DragFloat(Lang.Get($"{modid}:LookSensitivityHorizontal"), ref lookSensitivityHorizontal, 0.01f, 0.0f, 10.0f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
+            ImGui.SetItemTooltip(Lang.Get($"{modid}:LookSensitivityHorizontalToolTip"));
+            ImGui.DragFloat(Lang.Get($"{modid}:LookSensitivityVertical"), ref lookSensitivityVertical, 0.01f, 0.0f, 10.0f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
+            ImGui.SetItemTooltip(Lang.Get($"{modid}:LookSensitivityVerticalToolTip"));
         }
                
         private void LoadConfig()
@@ -108,10 +117,10 @@ namespace ControllerMovementVS.config
                 mod.config.AutoSprint = autoSprint;
                 mod.config.GamepadIndex = gamepadSelectedIdx;
                 mod.config.DeadZone = deadzone;
-                mod.config.LookUsingRightStick = LookUsingRightStick;
-                mod.config.SwapLeftRightSticks = SwapLeftRightSticks;
-                mod.config.LookSensitivityHorizontal = LookSensitivityHorizontal;
-                mod.config.LookSensitivityVertical = LookSensitivityVertical;
+                mod.config.LookUsingRightStick = lookUsingRightStick;
+                mod.config.SwapLeftRightSticks = swapLeftRightSticks;
+                mod.config.LookSensitivityHorizontal = lookSensitivityHorizontal;
+                mod.config.LookSensitivityVertical = lookSensitivityVertical;
                 api.StoreModConfig(mod.config, "ControllerMovementVS.json");
             }
         }
@@ -123,10 +132,10 @@ namespace ControllerMovementVS.config
                 autoSprint = mod.config.AutoSprint;
                 deadzone = mod.config.DeadZone;
                 gamepadSelectedIdx = mod.config.GamepadIndex;
-                LookUsingRightStick = mod.config.LookUsingRightStick;
-                SwapLeftRightSticks = mod.config.SwapLeftRightSticks;
-                LookSensitivityHorizontal = mod.config.LookSensitivityHorizontal;
-                LookSensitivityVertical = mod.config.LookSensitivityVertical;
+                lookUsingRightStick = mod.config.LookUsingRightStick;
+                swapLeftRightSticks = mod.config.SwapLeftRightSticks;
+                lookSensitivityHorizontal = mod.config.LookSensitivityHorizontal;
+                lookSensitivityVertical = mod.config.LookSensitivityVertical;
             }
         }
     }

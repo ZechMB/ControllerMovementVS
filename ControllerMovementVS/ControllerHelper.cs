@@ -7,7 +7,6 @@ namespace ControllerMovementVS
     internal static class ControllerHelper
     {
         //what need:
-        //turn using right stick
         //way to remap inputs
         //add jumpsneaksprint
         //translation support

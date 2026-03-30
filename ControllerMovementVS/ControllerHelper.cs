@@ -19,16 +19,16 @@ namespace ControllerMovementVS
         internal static short rightX = 0;
         internal static short rightY = 0;
 
-        internal static int getGamepads()
+        internal static int GetGamepads()
         {
             //do i still need to call sdl.free?
             gamepads = SDL.GetGamepads(out int gamepadCount);
             gamepadNames.Clear();
             for (int i = 0; i < gamepadCount; i++)
             {
-                #pragma warning disable CS8602 // Dereference of a possibly null reference.
+                #pragma warning disable CS8602
                 string? name = SDL.GetGamepadNameForID(gamepads[i]);
-                #pragma warning restore CS8602 // Dereference of a possibly null reference.
+                #pragma warning restore CS8602
                 if (name is not null)
                 {
                     gamepadNames.Add(name);
@@ -37,7 +37,7 @@ namespace ControllerMovementVS
             return gamepadCount;
         }
 
-        internal static void setGamepad(AnalogMovement am, int indexOfGamepad)
+        internal static void SetGamepad(AnalogMovement am, int indexOfGamepad)
         {
             if (am.gamepad is not null)
             {
@@ -52,10 +52,10 @@ namespace ControllerMovementVS
         //sets newly connected gamepads as the one we want to use
         internal static void SetupNewGamePad(AnalogMovement am, ModSystem ms)
         {
-            int numofgps = getGamepads();
+            int numofgps = GetGamepads();
             if (numofgps > 0 && gamepads is not null)
             {
-                setGamepad(am, numofgps - 1);
+                SetGamepad(am, numofgps - 1);
                 if (am.gamepad is not null)
                 {
                     ms.Mod.Logger.Notification("now using gamepad named: " + SDL.GetGamepadName((nint)am.gamepad) + " type: " + SDL.GetGamepadType((nint)am.gamepad));

@@ -1,7 +1,7 @@
 ﻿using System;
 using Vintagestory.API.Common;
 
-namespace ControllerMovementVS
+namespace ControllerMovementVS.config
 {
     internal static class ConfigLoader
     {
@@ -15,7 +15,7 @@ namespace ControllerMovementVS
                     modSystem.config = new();
                 }
                 //save just in case new config variables were added or no config found
-                api.StoreModConfig<Config>(modSystem.config, "ControllerMovementVS.json");
+                api.StoreModConfig(modSystem.config, "ControllerMovementVS.json");
             }
             catch (Exception e)
             {

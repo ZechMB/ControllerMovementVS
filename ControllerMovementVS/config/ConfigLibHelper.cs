@@ -2,14 +2,13 @@
 using ImGuiNET;
 using Vintagestory.API.Common;
 
-namespace ControllerMovementVS
+namespace ControllerMovementVS.config
 {
     internal class ConfigLibHelper
     {
         const string Modid = "ControllerMovementVS";
-        ICoreAPI api;
-        ControllerMovementVSModSystem mod;
-        //private ref Config config;
+        readonly ICoreAPI api;
+        readonly ControllerMovementVSModSystem mod;
 
         //private const string categorycontroller = $"{Modid}:Config.Category.Crafting"; Lang.Get(categorycontroller)
 
@@ -50,7 +49,7 @@ namespace ControllerMovementVS
             {
                 for (int n = 0; n < ControllerHelper.gamepadNames.Count; n++)
                 {
-                    bool is_selected = (gamepadSelectedIdx == n);
+                    bool is_selected = gamepadSelectedIdx == n;
                     if (ImGui.Selectable(ControllerHelper.gamepadNames[n], is_selected))
                     {
                         gamepadSelectedIdx = n;
@@ -83,7 +82,7 @@ namespace ControllerMovementVS
 
             if (mod.am is not null)
             {
-                ControllerHelper.setGamepad(mod.am, gamepadSelectedIdx);
+                ControllerHelper.SetGamepad(mod.am, gamepadSelectedIdx);
             }            
         }
 
@@ -94,7 +93,7 @@ namespace ControllerMovementVS
 
             if (mod.am is not null)
             {
-                ControllerHelper.setGamepad(mod.am, gamepadSelectedIdx);
+                ControllerHelper.SetGamepad(mod.am, gamepadSelectedIdx);
             }
         }
 
@@ -102,7 +101,7 @@ namespace ControllerMovementVS
         {
             if (mod.am is not null)
             {
-                ControllerHelper.setGamepad(mod.am, gamepadSelectedIdx);
+                ControllerHelper.SetGamepad(mod.am, gamepadSelectedIdx);
             }
             if (mod.config is not null)
             {
@@ -113,7 +112,7 @@ namespace ControllerMovementVS
                 mod.config.SwapLeftRightSticks = SwapLeftRightSticks;
                 mod.config.LookSensitivityHorizontal = LookSensitivityHorizontal;
                 mod.config.LookSensitivityVertical = LookSensitivityVertical;
-                api.StoreModConfig<Config>(mod.config, "ControllerMovementVS.json");
+                api.StoreModConfig(mod.config, "ControllerMovementVS.json");
             }
         }
 

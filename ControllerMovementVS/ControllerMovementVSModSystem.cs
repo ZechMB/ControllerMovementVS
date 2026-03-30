@@ -1,4 +1,5 @@
 ﻿using AnalogMovementVS;
+using ControllerMovementVS.config;
 using SDL3;
 using System;
 using Vintagestory.API.Client;
@@ -12,9 +13,7 @@ namespace ControllerMovementVS
         private bool initialized = false;
         internal ICoreClientAPI? capi;
         internal AnalogMovement? am;
-        //private static Config? config;
         private long tickListenerId = 0;
-        private long tickListenerId2 = 0;
         private ConfigLibHelper? configLibhelper;
         internal Config? config;
 
@@ -22,7 +21,6 @@ namespace ControllerMovementVS
         {
             capi = api;
             tickListenerId = api.Event.RegisterGameTickListener(OnTick, 0);
-            tickListenerId2 = api.Event.RegisterGameTickListener(EverySec, 1000);
 
             try
             {
@@ -85,18 +83,9 @@ namespace ControllerMovementVS
             }
         }
 
-        internal void EverySec(float deltaTime)
-        {
-            if (am is not null)
-            {
-                //ControllerHelper.SetupGamePad(am, this);
-            }
-        }
-
         public override void Dispose()
         {
             capi?.Event.UnregisterGameTickListener(tickListenerId);
-            capi?.Event.UnregisterGameTickListener(tickListenerId2);
             if (sdlActivated) SDL.Quit();
             base.Dispose();
         }

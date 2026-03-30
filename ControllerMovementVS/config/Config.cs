@@ -1,4 +1,4 @@
-﻿namespace ControllerMovementVS
+﻿namespace ControllerMovementVS.config
 {
     public class Config
     {

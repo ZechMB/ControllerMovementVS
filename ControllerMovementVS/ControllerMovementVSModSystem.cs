@@ -2,6 +2,9 @@
 using ControllerMovementVS.config;
 using SDL3;
 using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 
@@ -9,6 +12,7 @@ namespace ControllerMovementVS
 {
     public class ControllerMovementVSModSystem : ModSystem
     {
+        private bool resolverSet = false;
         internal bool sdlActivated = false;
         private bool initialized = false;
         internal ICoreClientAPI? capi;
@@ -21,6 +25,27 @@ namespace ControllerMovementVS
         {
             capi = api;
             tickListenerId = api.Event.RegisterGameTickListener(OnTick, 0);
+
+            //set native lib location to /native because vintage story wants them there
+            if (!resolverSet)
+            {
+                resolverSet = true;
+                NativeLibrary.SetDllImportResolver(typeof(SDL).Assembly, (libraryName, assembly, searchPath) =>
+                {
+                    if (libraryName == "SDL3")
+                    {
+                        string path = "";
+                        var modDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? "";
+                        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) path = Path.Combine(modDir, "native", "SDL3.dll");
+                        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) path = Path.Combine(modDir, "native", "SDL3.so");
+                        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) path = Path.Combine(modDir, "native", "SDL3.dylib");
+
+                        try { return NativeLibrary.Load(path); }
+                        catch (Exception ex) { Mod.Logger.Error($" Failed to load SDL3: {ex.Message}"); }
+                    }
+                    return IntPtr.Zero;
+                });
+            }
 
             try
             {

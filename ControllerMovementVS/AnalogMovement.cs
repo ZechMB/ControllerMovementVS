@@ -1,6 +1,7 @@
 ﻿using AnalogMovementVS;
 using System;
 using Vintagestory.API.Client;
+using Vintagestory.Client;
 
 namespace ControllerMovementVS
 {
@@ -26,7 +27,7 @@ namespace ControllerMovementVS
             if (mod.config is not null) deadzone = mod.config.DeadZone;
 
             //looking
-            if (mod.config is not null && mod.config.LookUsingRightStick)
+            if (mod.config is not null && mod.config.LookUsingRightStick && ScreenManager.Platform.IsFocused)
             {
                 if (mod.config.SwapLeftRightSticks)
                 {
@@ -51,7 +52,7 @@ namespace ControllerMovementVS
             }
 
             //moving
-            if (capi.World.Player.Entity.Controls is EntityControlsAMfVS am && am.IsGameReadyForInput && mod.config is not null)
+            if (capi.World.Player.Entity.Controls is EntityControlsAMfVS am && mod.config is not null)
             {
                 if (mod.config.SwapLeftRightSticks)
                 {
@@ -86,15 +87,6 @@ namespace ControllerMovementVS
                 //var player = capi.World.Player;
                 //am.amJump = capi.Input.IsHotKeyPressed("jump") && (player.Entity.PrevFrameCanStandUp || player.WorldData.NoClip);
                 //am.amSneak = capi.Input.IsHotKeyPressed("sneak");
-            }
-            else if (capi.World.Player.Entity.Controls is EntityControlsAMfVS am2 && !am2.IsGameReadyForInput)
-            {
-                //zero the controls if we enter a menu so we stop moving
-                am2.amForwardBackward = 0;
-                am2.amLeftRight = 0;
-                am2.amSprint = false;
-                //am2.amJump = false;
-                //am2.amSneak = false;
             }
         }
 

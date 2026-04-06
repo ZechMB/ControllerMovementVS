@@ -12,7 +12,6 @@ namespace ControllerMovementVS
 {
     public class ControllerMovementVSModSystem : ModSystem
     {
-        private bool resolverSet = false;
         internal bool sdlActivated = false;
         private bool initialized = false;
         internal ICoreClientAPI? capi;
@@ -26,10 +25,9 @@ namespace ControllerMovementVS
             capi = api;
             tickListenerId = api.Event.RegisterGameTickListener(OnTick, 0);
 
-            //set native lib location to /native because vintage story wants them there
-            if (!resolverSet)
+            //set native lib location to /native because vintage story wants them there            
+            try
             {
-                resolverSet = true;
                 NativeLibrary.SetDllImportResolver(typeof(SDL).Assembly, (libraryName, assembly, searchPath) =>
                 {
                     if (libraryName == "SDL3")
@@ -46,6 +44,8 @@ namespace ControllerMovementVS
                     return IntPtr.Zero;
                 });
             }
+            catch { }//expected to fail if mod is reloaded (such as by going to the main menu and back into a world)
+            
 
             try
             {

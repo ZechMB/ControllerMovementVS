@@ -75,7 +75,7 @@ namespace ControllerMovementVS
                 //Mod.Logger.Notification("readingy " + moveY);
 
                 // Update position
-                if (mod.config.AutoSprint) AutoSprint(am);
+                if (mod.config.AutoSprint && !am.IsMounted) AutoSprint(am);
                 else
                 {
                     am.amForwardBackward = moveY;

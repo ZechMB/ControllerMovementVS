@@ -1,5 +1,7 @@
 {
-  "SelectGamepad": "Select gamepad",
+  "SaveReminder": "Don't forget to save",
+  "SelectGamepad": "Select gamepad:",
+  "StickSettings": "Stick Settings",
   "AutoSprint": "Auto sprint",
   "AutoSprintToolTip": "Auto transition from walking to running when stick is more than half pushed",
   "Deadzone": "Deadzone",

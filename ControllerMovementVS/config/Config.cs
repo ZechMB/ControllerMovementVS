@@ -1,4 +1,6 @@
-﻿namespace ControllerMovementVS.config
+﻿using System.Collections.Generic;
+
+namespace ControllerMovementVS.config
 {
     public class Config
     {
@@ -14,7 +16,9 @@
         public float LookSensitivityHorizontal = 1f;
         //any value 0.0 or higher 
         public float LookSensitivityVertical = 1f;        
-        //used internally to select a gamepad
+        //used with configlib to select a gamepad
         public int GamepadIndex = 0;
+        //used with configlib to save rebinded buttons
+        public List<BindingHelper.Binding> PlayerBindings = [];
     }
 }

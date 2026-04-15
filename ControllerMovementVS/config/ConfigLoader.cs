@@ -24,10 +24,6 @@ namespace ControllerMovementVS.config
                 modSystem.Mod.Logger.Error(e);
                 modSystem.config = new();
             }
-            if (modSystem.config is not null && modSystem.config.DeadZone > 1f)
-            {
-                modSystem.Mod.Logger.Warning("deadzone is set higher than expected max input of 1.0");
-            }
         }
     }
 }

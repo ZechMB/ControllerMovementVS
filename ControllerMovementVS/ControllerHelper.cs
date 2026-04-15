@@ -1,19 +1,26 @@
 ﻿using SDL3;
 using System.Collections.Generic;
 using Vintagestory.API.Common;
+using static ControllerMovementVS.config.BindingHelper;
 
 namespace ControllerMovementVS
 {
     internal static class ControllerHelper
     {
-        //what need:
-        //way to remap inputs
-        //add jumpsneaksprint
-        //translation support
-        //maybe support multiple gamepads
+        //ideas:
+        //pause button(if possible)
+        //chat message for (dis)connects and battery low
+        //toggle sprint (should add as binding)
+        //toggle crouch
+        //button face labels per controller type
+        //button rebinding translations
+        //axis as button
+        //touchpad as mouse
+        //support multiple gamepads
+        //support joysticks
 
         internal static uint[]? gamepads;
-        public static List<string> gamepadNames = new List<string>();
+        public static List<string> gamepadNames = [];
         internal static short leftX = 0;
         internal static short leftY = 0;
         internal static short rightX = 0;
@@ -21,17 +28,17 @@ namespace ControllerMovementVS
 
         internal static int GetGamepads()
         {
-            //do i still need to call sdl.free?
             gamepads = SDL.GetGamepads(out int gamepadCount);
             gamepadNames.Clear();
             for (int i = 0; i < gamepadCount; i++)
             {
-                #pragma warning disable CS8602
-                string? name = SDL.GetGamepadNameForID(gamepads[i]);
-                #pragma warning restore CS8602
-                if (name is not null)
+                if (gamepads is not null)
                 {
-                    gamepadNames.Add(name);
+                    string? name = SDL.GetGamepadNameForID(gamepads[i]);
+                    if (name is not null)
+                    {
+                        gamepadNames.Add(name);
+                    }
                 }
             }
             return gamepadCount;
@@ -58,7 +65,7 @@ namespace ControllerMovementVS
                 SetGamepad(am, numofgps - 1);
                 if (am.gamepad is not null)
                 {
-                    ms.Mod.Logger.Notification("now using gamepad named: " + SDL.GetGamepadName((nint)am.gamepad) + " type: " + SDL.GetGamepadType((nint)am.gamepad));
+                    ms.Mod.Logger.Notification("switching to new gamepad named: '" + SDL.GetGamepadName((nint)am.gamepad) + "' type: '" + SDL.GetGamepadType((nint)am.gamepad) + "'");
                 }
             }            
         }
@@ -71,25 +78,60 @@ namespace ControllerMovementVS
             {
                 while (SDL.PollEvent(out SDL.Event e))
                 {
-                    if (e.Type == (uint)SDL.EventType.GamepadAxisMotion)
+                    if (am.gamepad is not null)
                     {
-                        if (am.gamepad is not null)
+                        //axes
+                        if (e.Type == (uint)SDL.EventType.GamepadAxisMotion && e.GAxis.Which == SDL.GetJoystickID(SDL.GetGamepadJoystick((nint)am.gamepad)))
                         {
-                            leftX = SDL.GetGamepadAxis((nint)am.gamepad, SDL.GamepadAxis.LeftX);
-                            leftY = SDL.GetGamepadAxis((nint)am.gamepad, SDL.GamepadAxis.LeftY);
-                            rightX = SDL.GetGamepadAxis((nint)am.gamepad, SDL.GamepadAxis.RightX);
-                            rightY = SDL.GetGamepadAxis((nint)am.gamepad, SDL.GamepadAxis.RightY);
+                            if (e.GAxis.Axis == (byte)SDL.GamepadAxis.LeftX) leftX = e.GAxis.Value;
+                            else if (e.GAxis.Axis == (byte)SDL.GamepadAxis.LeftY) leftY = e.GAxis.Value;
+                            else if (e.GAxis.Axis == (byte)SDL.GamepadAxis.RightX) rightX = e.GAxis.Value;
+                            else if (e.GAxis.Axis == (byte)SDL.GamepadAxis.RightY) rightY = e.GAxis.Value;
+                        }
+                        //button down
+                        else if (e.Type == (uint)SDL.EventType.GamepadButtonDown && e.GButton.Which == SDL.GetJoystickID(SDL.GetGamepadJoystick((nint)am.gamepad)))
+                        {
+                            if (IsRebinding) FinalizeRebind(e.GButton);
+                            else
+                            {
+                                for (int i = 0; i < CurrentBindings.Count; i++)
+                                {
+                                    if ((byte)CurrentBindings[i].GamepadButton == e.GButton.Button) //idk if i need to check for invalid buttons
+                                    {
+                                        var binding = CurrentBindings[i];
+                                        binding.Activated = true;
+                                        CurrentBindings[i] = binding;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        //button up
+                        else if (e.Type == (uint)SDL.EventType.GamepadButtonUp && e.GDevice.Which == SDL.GetJoystickID(SDL.GetGamepadJoystick((nint)am.gamepad)))
+                        {
+                            for (int i = 0; i < CurrentBindings.Count; i++)
+                            {
+                                if (CurrentBindings[i].GamepadButton == (SDL.GamepadButton)e.GButton.Button)
+                                {
+                                    var binding = CurrentBindings[i];
+                                    binding.Activated = false;
+                                    CurrentBindings[i] = binding;
+                                    break;
+                                }
+                            }
                         }
                     }
-                    else if (e.Type == (uint)SDL.EventType.GamepadAdded)
+
+                    //other events
+                    if (e.Type == (uint)SDL.EventType.GamepadAdded)
                     {
                         mod.Mod.Logger.Notification("gamepad added");
-                        SetupNewGamePad(am, mod);                        
+                        SetupNewGamePad(am, mod);
                     }
                     else if (e.Type == (uint)SDL.EventType.GamepadRemoved)
                     {
                         mod.Mod.Logger.Warning("gamepad removed");
-                        SetupNewGamePad(am, mod);                        
+                        SetupNewGamePad(am, mod);
                     }
                     else if (e.Type == (uint)SDL.EventType.Quit)
                     {

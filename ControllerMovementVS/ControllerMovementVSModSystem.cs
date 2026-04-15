@@ -39,41 +39,14 @@ namespace ControllerMovementVS
                         else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) path = Path.Combine(modDir, "native", "SDL3.dylib");
 
                         try { return NativeLibrary.Load(path); }
-                        catch (Exception ex) { Mod.Logger.Error($" Failed to load SDL3: {ex.Message}"); }
+                        catch (Exception ex) { Mod.Logger.Error($" Failed to load SDL native: {ex.Message}"); }
                     }
                     return IntPtr.Zero;
                 });
             }
             catch { }//expected to fail if mod is reloaded (such as by going to the main menu and back into a world)
-            
-
-            try
-            {
-                if (SDL.Init(SDL.InitFlags.Gamepad))
-                {
-                    Mod.Logger.Notification("sdl init good");
-                    sdlActivated = true;
-                    if (api.ModLoader.IsModEnabled("configlib"))
-                    {
-                        configLibhelper = new(api, this);
-                    }
-                    else
-                    {
-                        ConfigLoader.TryToLoadConfig(api, this);
-                    }
-                }
-                else
-                {
-                    Mod.Logger.Warning("sdl init fail");
-                    Mod.Logger.Warning($"SDL could not initialize: {SDL.GetError()}");
-                }
-            }
-            catch (Exception ex)
-            {
-                Mod.Logger.Error("failed sdl init: " + ex.Message);
-            }
+            sdlActivated = StartSDL();
         }
-
 
         //can't be called until entitycontrols is set
         internal void Init()
@@ -106,6 +79,49 @@ namespace ControllerMovementVS
                     am.ConsumeInputs();
                 }
             }
+        }
+
+        private bool StartSDL()
+        {
+            bool started = false;
+            if (capi is null) return started;
+            try
+            {
+                if (SDL.Init(SDL.InitFlags.Gamepad))
+                {
+                    Mod.Logger.Notification("sdl init good");
+                    sdlActivated = true;
+                    if (capi.ModLoader.IsModEnabled("configlib"))
+                    {
+                        configLibhelper ??= new(capi, this);
+                    }
+                    else
+                    {
+                        ConfigLoader.TryToLoadConfig(capi, this);
+                    }
+                    started = true;
+                }
+                else
+                {
+                    Mod.Logger.Warning($"sdl init error: {SDL.GetError()}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Mod.Logger.Error("failed sdl init: " + ex.Message);
+            }
+            return started;
+        }
+
+        internal bool RestartSDL()
+        {
+            Mod.Logger.Notification("trying to restart SDL, previously activated = " + sdlActivated);
+            if (sdlActivated)
+            {
+                sdlActivated = false;
+                SDL.Quit();
+            }
+            return StartSDL();
         }
 
         public override void Dispose()

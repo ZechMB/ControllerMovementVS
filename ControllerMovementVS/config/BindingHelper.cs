@@ -14,7 +14,8 @@ namespace ControllerMovementVS.config
             public static implicit operator Binding((string, SDL.GamepadButton) v) => new(v.Item1, v.Item2);
         }
 
-        internal static List<Binding> DefaultBindings = [("Jump", SDL.GamepadButton.South), ("Sneak", SDL.GamepadButton.RightStick), ("Sprint", SDL.GamepadButton.LeftStick)];
+        internal static List<Binding> DefaultBindings = [("Jump", SDL.GamepadButton.South), ("Sneak", SDL.GamepadButton.Invalid), ("Sprint", SDL.GamepadButton.Invalid), 
+            ("ToggleSneak", SDL.GamepadButton.RightStick), ("ToggleSprint", SDL.GamepadButton.Invalid)];
         internal static List<Binding> CurrentBindings = [];
 
         static void LoadDefaultBindings()
@@ -49,6 +50,7 @@ namespace ControllerMovementVS.config
         internal static bool IsRebinding = false;
         private static int indexOfRebinding = 0;
         private static ConfigLibHelper? clhelper = null;
+
         internal static void StartRebind(int indexOfBinding, ConfigLibHelper clh)
         {
             if (CurrentBindings.Count >= indexOfBinding)
@@ -58,15 +60,18 @@ namespace ControllerMovementVS.config
                 clhelper = clh;
             }
         }
+
         internal static int GetIndexOfRebinding()
         {
             if (IsRebinding) return -1;
             return indexOfRebinding;
         }
+
         internal static void CancelRebind()
         {
             IsRebinding = false;
         }
+
         internal static void FinalizeRebind(SDL.GamepadButtonEvent button)
         {
             if (!IsRebinding) return;
@@ -79,6 +84,7 @@ namespace ControllerMovementVS.config
             }
             IsRebinding = false;
         }
+
         internal static void Unbind(int IndexToUnbind)
         {
             if (CurrentBindings.Count >= IndexToUnbind)
@@ -87,6 +93,23 @@ namespace ControllerMovementVS.config
                 CurrentBindings.RemoveAt(IndexToUnbind);
                 CurrentBindings.Insert(IndexToUnbind, new Binding(name, SDL.GamepadButton.Invalid));
             }
+        }
+
+        internal static bool GetActivated(string ActionName)
+        {
+            int index = CurrentBindings.FindIndex(b => b.ControlName == ActionName);
+            if (index != -1) return CurrentBindings[index].Activated;
+            else return false;
+        }
+
+        internal static bool IsBindValid(string ActionName)
+        {
+            int index = CurrentBindings.FindIndex(b => b.ControlName == ActionName);
+            if (index != -1 && CurrentBindings[index].GamepadButton != SDL.GamepadButton.Invalid)
+            {
+                return true;
+            }
+            else return false;
         }
     }    
 }

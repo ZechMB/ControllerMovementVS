@@ -54,12 +54,12 @@ namespace ControllerMovementVS
             initialized = true;
             if (capi is not null)
             {
-                if (capi.World.Player.Entity.Controls is EntityControlsAMfVS amcontrols)
+                if (capi.World.Player.Entity.Controls is EntityControlsAMfVS)
                 {
                     if (config is not null)
                     {
                         am = new AnalogMovement(capi, this);
-                        ControllerHelper.SetupNewGamePad(am, this);
+                        //ControllerHelper.SetupNewGamePad(am, this);
                     }
                 }
             }

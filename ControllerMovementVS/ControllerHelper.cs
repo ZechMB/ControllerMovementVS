@@ -8,7 +8,7 @@ namespace ControllerMovementVS
     internal static class ControllerHelper
     {
         //ideas:
-        //pause button(if possible)
+        //pause button(if possible) ScreenManager.hotkeyManager.TriggerHotKey()
         //chat message for (dis)connects and battery low
         //toggle sprint (should add as binding)
         //toggle crouch
@@ -98,7 +98,7 @@ namespace ControllerMovementVS
                             {
                                 for (int i = 0; i < CurrentBindings.Count; i++)
                                 {
-                                    if ((byte)CurrentBindings[i].GamepadButton == e.GButton.Button) //idk if i need to check for invalid buttons
+                                    if ((byte)CurrentBindings[i].GamepadButton == e.GButton.Button)
                                     {
                                         var binding = CurrentBindings[i];
                                         binding.Activated = true;

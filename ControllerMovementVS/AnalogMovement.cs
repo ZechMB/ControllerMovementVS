@@ -22,6 +22,10 @@ namespace ControllerMovementVS
         float lookX = 0;
         float lookY = 0;
         internal nint? gamepad;
+        bool toggleSneak = false;
+        bool toggleSprint = false;
+        bool prevToggleSneakPressed = false;
+        bool prevToggleSprintPressed = false;
 
         internal void ConsumeInputs()
         {
@@ -76,16 +80,39 @@ namespace ControllerMovementVS
                 {
                     am.amForwardBackward = moveY;
                     am.amLeftRight = moveX;
-                    int index1 = BindingHelper.CurrentBindings.FindIndex(b => b.ControlName == "Sprint");
-                    if (index1 != -1) am.amSprint = BindingHelper.CurrentBindings[index1].Activated; //|| (am.Sprint && am.TriesToMove && ClientSettings.ToggleSprint && am.IsMouseGrabbed);
+                    if (BindingHelper.IsBindValid("Sprint")) am.amSprint = BindingHelper.GetActivated("Sprint");
+                    if (BindingHelper.IsBindValid("ToggleSprint"))
+                    {
+                        bool pressed = BindingHelper.GetActivated("ToggleSprint");
+                        if (pressed != prevToggleSprintPressed)
+                        {
+                            prevToggleSprintPressed = pressed;
+                            if (pressed == true)
+                            {
+                                toggleSprint = !toggleSprint;
+                                am.amSprint = toggleSprint;
+                            }
+                        }
+                    }
                 }
 
                 //set jump & sneak
                 var player = capi.World.Player;
-                int index2 = BindingHelper.CurrentBindings.FindIndex(b => b.ControlName == "Jump");
-                if (index2 != -1) am.amJump = BindingHelper.CurrentBindings[index2].Activated && (player.Entity.PrevFrameCanStandUp || player.WorldData.NoClip);
-                int index3 = BindingHelper.CurrentBindings.FindIndex(b => b.ControlName == "Sneak");
-                if (index3 != -1) am.amSneak = BindingHelper.CurrentBindings[index3].Activated;
+                if (BindingHelper.IsBindValid("Jump")) am.amJump = BindingHelper.GetActivated("Jump") && (player.Entity.PrevFrameCanStandUp || player.WorldData.NoClip);
+                if (BindingHelper.IsBindValid("Sneak")) am.amSneak = BindingHelper.GetActivated("Sneak");
+                if (BindingHelper.IsBindValid("ToggleSneak"))
+                {
+                    bool pressed = BindingHelper.GetActivated("ToggleSneak");
+                    if (pressed != prevToggleSneakPressed)
+                    {
+                        prevToggleSneakPressed = pressed;
+                        if (pressed == true)
+                        {
+                            toggleSneak = !toggleSneak;
+                            am.amSneak = toggleSneak;
+                        }
+                    }
+                }
             }
         }
 

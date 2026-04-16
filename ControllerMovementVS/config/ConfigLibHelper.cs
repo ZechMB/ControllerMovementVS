@@ -95,7 +95,9 @@ namespace ControllerMovementVS.config
                     ImGui.TableNextColumn();
                     ImGui.Text(bindings[i].ControlName);
                     ImGui.TableNextColumn();
-                    ImGui.Text(bindings[i].GamepadButton.ToString());
+                    string buttName = bindings[i].GamepadButton.ToString();
+                    if (bindings[i].GamepadButton == SDL3.SDL.GamepadButton.Invalid) buttName = ""; //ignore invalids and put a blank
+                    ImGui.Text(buttName);
                     ImGui.TableNextColumn();
                     bool temp = rebinding[i];
                     ImGui.Selectable(temp ? "Press a button to bind..." : "Rebind", ref temp);
@@ -152,6 +154,7 @@ namespace ControllerMovementVS.config
             {
                 if (!ControllerHelper.SetGamepad(mod.am, gamepadSelectedIdx))
                 {
+                    mod.Mod.Logger.Notification("less controllers");
                     //if gamepad can't be set (because theres not as many connected) then default to 0
                     gamepadSelectedIdx = 0;
                 }

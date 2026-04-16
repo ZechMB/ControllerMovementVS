@@ -150,7 +150,11 @@ namespace ControllerMovementVS.config
 
             if (mod.am is not null)
             {
-                ControllerHelper.SetGamepad(mod.am, gamepadSelectedIdx);
+                if (!ControllerHelper.SetGamepad(mod.am, gamepadSelectedIdx))
+                {
+                    //if gamepad can't be set (because theres not as many connected) then default to 0
+                    gamepadSelectedIdx = 0;
+                }
             }
             if (mod.config is not null) BindingHelper.LoadBindingsFromConfig(mod.config, this);
         }

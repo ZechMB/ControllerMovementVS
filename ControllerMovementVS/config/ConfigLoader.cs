@@ -10,10 +10,7 @@ namespace ControllerMovementVS.config
             try
             {
                 modSystem.config = api.LoadModConfig<Config>("ControllerMovementVS.json");
-                if (modSystem.config == null)
-                {
-                    modSystem.config = new();
-                }
+                modSystem.config ??= new();
                 //save just in case new config variables were added or no config found
                 api.StoreModConfig(modSystem.config, "ControllerMovementVS.json");
             }

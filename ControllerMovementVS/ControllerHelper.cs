@@ -44,16 +44,18 @@ namespace ControllerMovementVS
             return gamepadCount;
         }
 
-        internal static void SetGamepad(AnalogMovement am, int indexOfGamepad)
+        internal static bool SetGamepad(AnalogMovement am, int indexOfGamepad)
         {
             if (am.gamepad is not null)
             {
                 SDL.CloseGamepad((nint)am.gamepad);
             }
-            if (gamepads is not null && gamepads.Length >= indexOfGamepad)
+            if (gamepads is not null && gamepads.Length >= indexOfGamepad + 1)
             {
                 am.gamepad = SDL.OpenGamepad(gamepads[indexOfGamepad]);
+                return true;
             }
+            return false;
         }
 
         //sets newly connected gamepads as the one we want to use

@@ -10,7 +10,7 @@ namespace ControllerMovementVS
     internal class AnalogMovement
     {
         readonly ICoreClientAPI capi;
-        readonly ControllerMovementVSModSystem mod;
+        internal readonly ControllerMovementVSModSystem mod;
         internal AnalogMovement(ICoreClientAPI capi, ControllerMovementVSModSystem mod)
         {
             this.capi = capi;
@@ -92,6 +92,11 @@ namespace ControllerMovementVS
                                 toggleSprint = !toggleSprint;
                                 am.amSprint = toggleSprint;
                             }
+                        }
+                        if (!am.TriesToMove && toggleSprint && mod.config.StopToggleSprintIfNotMoving)
+                        {
+                            toggleSprint = !toggleSprint;
+                            am.amSprint = toggleSprint;
                         }
                     }
                 }

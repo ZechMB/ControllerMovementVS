@@ -20,5 +20,6 @@ namespace ControllerMovementVS.config
         public int GamepadIndex = 0;
         //used with configlib to save rebinded buttons
         public List<BindingHelper.Binding> PlayerBindings = [];
+        public bool StopToggleSprintIfNotMoving = true;
     }
 }

@@ -31,7 +31,7 @@ namespace ControllerMovementVS.config
             });
         }
 
-        int gamepadSelectedIdx = 0;
+        internal int gamepadSelectedIdx = 0;
         bool autoSprint = true;
         float deadzone = 0f;
         bool lookUsingRightStick = false;
@@ -44,7 +44,7 @@ namespace ControllerMovementVS.config
         private void Edit(ICoreAPI api, Config config, string id)
         {
             //keep polling in case the game is paused so we register controller changes
-            if (mod.am is not null && mod.capi is not null && mod.capi.IsGamePaused) ControllerHelper.PollEvents(mod.am, mod);
+            if (mod.am is not null && mod.capi is not null && mod.capi.IsGamePaused) ControllerHelper.PollEvents(mod.am, mod, true);
 
             ImGui.Text(Lang.Get($"{modid}:SaveReminder"));
 

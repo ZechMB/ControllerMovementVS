@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Vintagestory;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 
@@ -17,7 +18,7 @@ namespace ControllerMovementVS
         internal ICoreClientAPI? capi;
         internal AnalogMovement? am;
         private long tickListenerId = 0;
-        private ConfigLibHelper? configLibhelper;
+        internal ConfigLibHelper? configLibhelper;
         internal Config? config;
 
         public override void StartClientSide(ICoreClientAPI api)
@@ -51,7 +52,6 @@ namespace ControllerMovementVS
         //can't be called until entitycontrols is set
         internal void Init()
         {
-            initialized = true;
             if (capi is not null)
             {
                 if (capi.World.Player.Entity.Controls is EntityControlsAMfVS)
@@ -59,10 +59,15 @@ namespace ControllerMovementVS
                     if (config is not null)
                     {
                         am = new AnalogMovement(capi, this);
-                        //ControllerHelper.SetupNewGamePad(am, this);
+                        ControllerHelper.PollEvents(am, this, initialized); //poll once to get rid of the gamepad added events
+                        ControllerHelper.GetGamepads();
+                        bool succes = ControllerHelper.SetGamepad(am, config.GamepadIndex);
+                        Mod.Logger.Notification("suc= " +  succes);
+                        if (!succes) ControllerHelper.SetupNewGamePad(am, this);
                     }
                 }
             }
+            initialized = true;
         }
 
         internal void OnTick(float deltaTime)
@@ -75,7 +80,7 @@ namespace ControllerMovementVS
                 }
                 if (capi is not null && am is not null)
                 {
-                    ControllerHelper.PollEvents(am, this);
+                    ControllerHelper.PollEvents(am, this, initialized);
                     am.ConsumeInputs();
                 }
             }

@@ -10,8 +10,6 @@ namespace ControllerMovementVS
         //ideas:
         //pause button(if possible) ScreenManager.hotkeyManager.TriggerHotKey()
         //chat message for (dis)connects and battery low
-        //toggle sprint (should add as binding)
-        //toggle crouch
         //button face labels per controller type
         //button rebinding translations
         //axis as button
@@ -53,6 +51,7 @@ namespace ControllerMovementVS
             if (gamepads is not null && gamepads.Length >= indexOfGamepad + 1)
             {
                 am.gamepad = SDL.OpenGamepad(gamepads[indexOfGamepad]);
+                if (am.mod.configLibhelper is not null) am.mod.configLibhelper.gamepadSelectedIdx = indexOfGamepad;
                 return true;
             }
             return false;
@@ -74,7 +73,7 @@ namespace ControllerMovementVS
 
 
         //get all sdl events
-        internal static void PollEvents(AnalogMovement am, ControllerMovementVSModSystem mod)
+        internal static void PollEvents(AnalogMovement am, ControllerMovementVSModSystem mod, bool IsInitialized)
         {
             if (mod.sdlActivated)
             {
@@ -125,7 +124,7 @@ namespace ControllerMovementVS
                     }
 
                     //other events
-                    if (e.Type == (uint)SDL.EventType.GamepadAdded)
+                    if (e.Type == (uint)SDL.EventType.GamepadAdded && IsInitialized)
                     {
                         mod.Mod.Logger.Notification("gamepad added");
                         SetupNewGamePad(am, mod);

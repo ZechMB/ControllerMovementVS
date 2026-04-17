@@ -13,10 +13,12 @@
   "LookSensitivityHorizontalToolTip": "Multiplier for horizontal turn speed",
   "LookSensitivityVertical": "Look sensitivity vertical",
   "LookSensitivityVerticalToolTip": "Multiplier for vertical turn speed",
+  "InvertVerticalLook": "Invert vertical look",
+  "InvertVerticalLookToolTip": "Change 'stick up = look up' to 'stick up = look down'",
   "SprintSettings": "Sprint Settings",
   "AutoSprint": "Auto sprint",
   "AutoSprintToolTip": "Auto transition from walking to running when stick is more than half pushed",
-  "AutoSprintNote": "AutoSprint will disable all other sprint settings/binds",
+  "AutoSprintNote": "AutoSprint will disable all other sprint settings/binds, except when mounted",
   "AutoStopToggleSprint": "AutoStopToggleSprint",
   "AutoStopToggleSprintToolTip": "Stop toggle sprint if not moving"
 }

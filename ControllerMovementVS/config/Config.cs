@@ -14,6 +14,8 @@ namespace ControllerMovementVS.config
         public float LookSensitivityHorizontal = 1f;
         //any value 0.0 or higher
         public float LookSensitivityVertical = 1f;
+        //change up=up to up=down
+        public bool InvertVerticalLook = false;
         //sprint when moving fast without pressing sprint button
         public bool AutoSprint = true;
         //Stop toggle sprint if not moving

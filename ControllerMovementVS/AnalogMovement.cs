@@ -46,6 +46,7 @@ namespace ControllerMovementVS
                 }
                 lookX /= -32767f;
                 lookY /= 32767f;
+                if (mod.config.InvertVerticalLook) lookY *= -1;
                 lookX = (Math.Abs(lookX) > deadzone) ? lookX : 0;
                 lookY = (Math.Abs(lookY) > deadzone) ? lookY : 0;
                 lookX *= mod.config.LookSensitivityHorizontal * .08f;

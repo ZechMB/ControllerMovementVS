@@ -39,6 +39,7 @@ namespace ControllerMovementVS.config
         bool swapLeftRightSticks = false;
         float lookSensitivityHorizontal = 0f;
         float lookSensitivityVertical = 0f;
+        bool invertVerticalLook = false;
         internal List<bool> rebinding = [];
 
         //ConfigLib render
@@ -80,6 +81,8 @@ namespace ControllerMovementVS.config
             ImGui.SetItemTooltip(Lang.Get($"{modid}:LookSensitivityHorizontalToolTip"));
             ImGui.SliderFloat(Lang.Get($"{modid}:LookSensitivityVertical"), ref lookSensitivityVertical, 0.0f, 10.0f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
             ImGui.SetItemTooltip(Lang.Get($"{modid}:LookSensitivityVerticalToolTip"));
+            ImGui.Checkbox(Lang.Get($"{modid}:InvertVerticalLook"), ref invertVerticalLook);
+            ImGui.SetItemTooltip(Lang.Get($"{modid}:InvertVerticalLookToolTip"));
 
             ImGui.SeparatorText(Lang.Get($"{modid}:SprintSettings"));
             ImGui.Checkbox(Lang.Get($"{modid}:AutoSprint"), ref autoSprint);
@@ -198,6 +201,7 @@ namespace ControllerMovementVS.config
                 mod.config.SwapLeftRightSticks = swapLeftRightSticks;
                 mod.config.LookSensitivityHorizontal = lookSensitivityHorizontal;
                 mod.config.LookSensitivityVertical = lookSensitivityVertical;
+                mod.config.InvertVerticalLook = invertVerticalLook;
                 api.StoreModConfig(mod.config, "ControllerMovementVS.json");
             }
         }
@@ -214,6 +218,7 @@ namespace ControllerMovementVS.config
                 swapLeftRightSticks = mod.config.SwapLeftRightSticks;
                 lookSensitivityHorizontal = mod.config.LookSensitivityHorizontal;
                 lookSensitivityVertical = mod.config.LookSensitivityVertical;
+                invertVerticalLook = mod.config.InvertVerticalLook;
             }
         }
     }

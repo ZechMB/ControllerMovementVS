@@ -14,8 +14,8 @@ namespace ControllerMovementVS.config
             public static implicit operator Binding((string, SDL.GamepadButton) v) => new(v.Item1, v.Item2);
         }
 
-        internal static List<Binding> DefaultBindings = [("Jump", SDL.GamepadButton.South), ("Sneak", SDL.GamepadButton.Invalid), ("Sprint", SDL.GamepadButton.Invalid), 
-            ("ToggleSneak", SDL.GamepadButton.RightStick), ("ToggleSprint", SDL.GamepadButton.Invalid)];
+        internal static List<Binding> DefaultBindings = [("Jump", SDL.GamepadButton.South), ("Sneak", SDL.GamepadButton.Invalid), ("ToggleSneak", SDL.GamepadButton.RightStick),
+            ("Sprint", SDL.GamepadButton.Invalid), ("ToggleSprint", SDL.GamepadButton.Invalid)];
         internal static List<Binding> CurrentBindings = [];
 
         static void LoadDefaultBindings()

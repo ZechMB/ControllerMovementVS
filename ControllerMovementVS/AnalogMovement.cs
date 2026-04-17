@@ -3,7 +3,6 @@ using ControllerMovementVS.config;
 using System;
 using Vintagestory.API.Client;
 using Vintagestory.Client;
-using Vintagestory.Client.NoObf;
 
 namespace ControllerMovementVS
 {
@@ -80,7 +79,8 @@ namespace ControllerMovementVS
                 {
                     am.amForwardBackward = moveY;
                     am.amLeftRight = moveX;
-                    if (BindingHelper.IsBindValid("Sprint")) am.amSprint = BindingHelper.GetActivated("Sprint");
+                    bool shouldSprint = false;
+                    if (BindingHelper.IsBindValid("Sprint")) shouldSprint = BindingHelper.GetActivated("Sprint");
                     if (BindingHelper.IsBindValid("ToggleSprint"))
                     {
                         bool pressed = BindingHelper.GetActivated("ToggleSprint");
@@ -90,21 +90,21 @@ namespace ControllerMovementVS
                             if (pressed == true)
                             {
                                 toggleSprint = !toggleSprint;
-                                am.amSprint = toggleSprint;
                             }
                         }
-                        if (!am.TriesToMove && toggleSprint && mod.config.StopToggleSprintIfNotMoving)
+                        if (!am.TriesToMove && toggleSprint && mod.config.AutoStopToggleSprint)
                         {
-                            toggleSprint = !toggleSprint;
-                            am.amSprint = toggleSprint;
+                            toggleSprint = false;
                         }
+                        am.amSprint = shouldSprint || toggleSprint;
                     }
                 }
 
                 //set jump & sneak
                 var player = capi.World.Player;
                 if (BindingHelper.IsBindValid("Jump")) am.amJump = BindingHelper.GetActivated("Jump") && (player.Entity.PrevFrameCanStandUp || player.WorldData.NoClip);
-                if (BindingHelper.IsBindValid("Sneak")) am.amSneak = BindingHelper.GetActivated("Sneak");
+                bool shouldSneak = false;
+                if (BindingHelper.IsBindValid("Sneak")) shouldSneak = BindingHelper.GetActivated("Sneak");
                 if (BindingHelper.IsBindValid("ToggleSneak"))
                 {
                     bool pressed = BindingHelper.GetActivated("ToggleSneak");
@@ -114,10 +114,10 @@ namespace ControllerMovementVS
                         if (pressed == true)
                         {
                             toggleSneak = !toggleSneak;
-                            am.amSneak = toggleSneak;
                         }
                     }
                 }
+                am.amSneak = shouldSneak || toggleSneak;
             }
         }
 
@@ -140,13 +140,6 @@ namespace ControllerMovementVS
             {
                 leftright *= 2f;
             }
-
-            /*
-            if (config.ReverseSprint && capi.Input.IsHotKeyPressed("sprint"))
-            {
-                ShouldSprint = false;
-            }
-            */
 
             //output controls
             am.amForwardBackward = forwardback;

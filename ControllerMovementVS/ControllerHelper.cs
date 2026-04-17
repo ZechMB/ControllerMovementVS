@@ -8,7 +8,6 @@ namespace ControllerMovementVS
     internal static class ControllerHelper
     {
         //ideas:
-        //pause button(if possible) ScreenManager.hotkeyManager.TriggerHotKey()
         //chat message for (dis)connects and battery low
         //button face labels per controller type
         //button rebinding translations

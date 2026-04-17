@@ -33,6 +33,7 @@ namespace ControllerMovementVS.config
 
         internal int gamepadSelectedIdx = 0;
         bool autoSprint = true;
+        bool autoStopToggleSprint = true;
         float deadzone = 0f;
         bool lookUsingRightStick = false;
         bool swapLeftRightSticks = false;
@@ -65,15 +66,14 @@ namespace ControllerMovementVS.config
                 }
                 ImGui.EndListBox();
             }
+            
             ImGui.SeparatorText(Lang.Get($"{modid}:StickSettings"));
-            ImGui.Checkbox(Lang.Get($"{modid}:AutoSprint"), ref autoSprint);
-            ImGui.SetItemTooltip(Lang.Get($"{modid}:AutoSprintToolTip"));
             ImGui.SliderFloat(Lang.Get($"{modid}:Deadzone"), ref deadzone, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
             ImGui.SetItemTooltip(Lang.Get($"{modid}:DeadzoneToolTip"));
-
-            ImGui.NewLine();
             ImGui.Checkbox(Lang.Get($"{modid}:SwapLeftRightSticks"), ref swapLeftRightSticks);
             ImGui.SetItemTooltip(Lang.Get($"{modid}:SwapLeftRightSticksToolTip"));
+
+            ImGui.SeparatorText(Lang.Get($"{modid}:LookSettings"));
             ImGui.Checkbox(Lang.Get($"{modid}:LookUsingRightStick"), ref lookUsingRightStick);
             ImGui.SetItemTooltip(Lang.Get($"{modid}:LookUsingRightStickToolTip"));
             ImGui.SliderFloat(Lang.Get($"{modid}:LookSensitivityHorizontal"), ref lookSensitivityHorizontal, 0.0f, 10.0f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
@@ -81,12 +81,20 @@ namespace ControllerMovementVS.config
             ImGui.SliderFloat(Lang.Get($"{modid}:LookSensitivityVertical"), ref lookSensitivityVertical, 0.0f, 10.0f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
             ImGui.SetItemTooltip(Lang.Get($"{modid}:LookSensitivityVerticalToolTip"));
 
+            ImGui.SeparatorText(Lang.Get($"{modid}:SprintSettings"));
+            ImGui.Checkbox(Lang.Get($"{modid}:AutoSprint"), ref autoSprint);
+            ImGui.SetItemTooltip(Lang.Get($"{modid}:AutoSprintToolTip"));
+            ImGui.Text(Lang.Get($"{modid}:AutoSprintNote"));
+            ImGui.Checkbox(Lang.Get($"{modid}:AutoStopToggleSprint"), ref autoStopToggleSprint);
+            ImGui.SetItemTooltip(Lang.Get($"{modid}:AutoStopToggleSprintToolTip"));
+
             ImGui.SeparatorText("Button Rebindings");
             if (ImGui.BeginTable("rebind table", 4, ImGuiTableFlags.NoSavedSettings | ImGuiTableFlags.Borders))
             {
                 ImGui.TableNextRow(); ImGui.TableNextColumn(); ImGui.Text("Action:");
                 ImGui.TableNextColumn(); ImGui.Text("Button:");
-                ImGui.TableNextColumn(); ImGui.TableNextColumn();
+                ImGui.TableNextColumn(); //bind
+                ImGui.TableNextColumn(); //unbind
                 var bindings = BindingHelper.CurrentBindings;
                 for (int i = 0; i < rebinding.Count; i++)
                 {
@@ -154,7 +162,6 @@ namespace ControllerMovementVS.config
             {
                 if (!ControllerHelper.SetGamepad(mod.am, gamepadSelectedIdx))
                 {
-                    mod.Mod.Logger.Notification("less controllers");
                     //if gamepad can't be set (because theres not as many connected) then default to 0
                     gamepadSelectedIdx = 0;
                 }
@@ -184,6 +191,7 @@ namespace ControllerMovementVS.config
             {
                 BindingHelper.SaveBindingsToConfig(mod.config);
                 mod.config.AutoSprint = autoSprint;
+                mod.config.AutoStopToggleSprint = autoStopToggleSprint;
                 mod.config.GamepadIndex = gamepadSelectedIdx;
                 mod.config.DeadZone = deadzone;
                 mod.config.LookUsingRightStick = lookUsingRightStick;
@@ -199,6 +207,7 @@ namespace ControllerMovementVS.config
             if (mod.config is not null)
             {
                 autoSprint = mod.config.AutoSprint;
+                autoStopToggleSprint = mod.config.AutoStopToggleSprint;
                 deadzone = mod.config.DeadZone;
                 gamepadSelectedIdx = mod.config.GamepadIndex;
                 lookUsingRightStick = mod.config.LookUsingRightStick;

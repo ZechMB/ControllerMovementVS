@@ -5,7 +5,6 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Vintagestory;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 
@@ -61,9 +60,7 @@ namespace ControllerMovementVS
                         am = new AnalogMovement(capi, this);
                         ControllerHelper.PollEvents(am, this, initialized); //poll once to get rid of the gamepad added events
                         ControllerHelper.GetGamepads();
-                        bool succes = ControllerHelper.SetGamepad(am, config.GamepadIndex);
-                        Mod.Logger.Notification("suc= " +  succes);
-                        if (!succes) ControllerHelper.SetupNewGamePad(am, this);
+                        if (!ControllerHelper.SetGamepad(am, config.GamepadIndex)) ControllerHelper.SetupNewGamePad(am, this);
                     }
                 }
             }

@@ -83,21 +83,28 @@ namespace ControllerMovementVS
                     if (BindingHelper.IsBindValid("Sprint")) shouldSprint = BindingHelper.GetActivated("Sprint");
                     if (BindingHelper.IsBindValid("ToggleSprint"))
                     {
-                        bool pressed = BindingHelper.GetActivated("ToggleSprint");
-                        if (pressed != prevToggleSprintPressed)
+                        if (!am.IsMounted)
                         {
-                            prevToggleSprintPressed = pressed;
-                            if (pressed == true)
+                            bool pressed = BindingHelper.GetActivated("ToggleSprint");
+                            if (pressed != prevToggleSprintPressed)
                             {
-                                toggleSprint = !toggleSprint;
+                                prevToggleSprintPressed = pressed;
+                                if (pressed == true)
+                                {
+                                    toggleSprint = !toggleSprint;
+                                }
+                            }
+                            if (!am.TriesToMove && toggleSprint && mod.config.AutoStopToggleSprint)
+                            {
+                                toggleSprint = false;
                             }
                         }
-                        if (!am.TriesToMove && toggleSprint && mod.config.AutoStopToggleSprint)
+                        else //dont toggle if mounted
                         {
-                            toggleSprint = false;
+                            toggleSprint = BindingHelper.GetActivated("ToggleSprint");
                         }
-                        am.amSprint = shouldSprint || toggleSprint;
                     }
+                        am.amSprint = shouldSprint || toggleSprint;
                 }
 
                 //set jump & sneak

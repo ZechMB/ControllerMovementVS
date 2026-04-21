@@ -28,36 +28,36 @@ namespace ControllerMovementVS
 
         internal void ConsumeInputs()
         {
-            float deadzone = 0;
-            if (mod.config is not null) deadzone = mod.config.DeadZone;
-
-            //looking
-            if (mod.config is not null && mod.config.LookUsingRightStick && ScreenManager.Platform.IsFocused)
-            {
-                if (mod.config.SwapLeftRightSticks)
-                {
-                    lookX = ControllerHelper.leftX;
-                    lookY = ControllerHelper.leftY;
-                }
-                else
-                {
-                    lookX = ControllerHelper.rightX;
-                    lookY = ControllerHelper.rightY;
-                }
-                lookX /= -32767f;
-                lookY /= 32767f;
-                if (mod.config.InvertVerticalLook) lookY *= -1;
-                lookX = (Math.Abs(lookX) > deadzone) ? lookX : 0;
-                lookY = (Math.Abs(lookY) > deadzone) ? lookY : 0;
-                lookX *= mod.config.LookSensitivityHorizontal * .08f;
-                lookY *= mod.config.LookSensitivityVertical * .08f;
-                capi.World.Player.CameraYaw += lookX;
-                capi.World.Player.Entity.Pos.Pitch += lookY;
-            }
-
-            //moving
             if (capi.World.Player.Entity.Controls is EntityControlsAMfVS am && mod.config is not null)
             {
+                float deadzone = mod.config.DeadZone;
+
+                //looking
+                if (mod.config.LookUsingRightStick && ScreenManager.Platform.IsFocused && !am.IsPauseMenuOpen)
+                {
+                    if (mod.config.SwapLeftRightSticks)
+                    {
+                        lookX = ControllerHelper.leftX;
+                        lookY = ControllerHelper.leftY;
+                    }
+                    else
+                    {
+                        lookX = ControllerHelper.rightX;
+                        lookY = ControllerHelper.rightY;
+                    }
+                    lookX /= -32767f;
+                    lookY /= 32767f;
+                    if (mod.config.InvertVerticalLook) lookY *= -1;
+                    lookX = (Math.Abs(lookX) > deadzone) ? lookX : 0;
+                    lookY = (Math.Abs(lookY) > deadzone) ? lookY : 0;
+                    lookX *= mod.config.LookSensitivityHorizontal * .08f;
+                    lookY *= mod.config.LookSensitivityVertical * .08f;
+                    capi.World.Player.CameraYaw += lookX;
+                    capi.World.Player.Entity.Pos.Pitch += lookY;
+                }
+
+                //moving
+                
                 if (mod.config.SwapLeftRightSticks)
                 {
                     moveX = ControllerHelper.rightX;
@@ -105,7 +105,7 @@ namespace ControllerMovementVS
                             toggleSprint = BindingHelper.GetActivated("ToggleSprint");
                         }
                     }
-                        am.amSprint = shouldSprint || toggleSprint;
+                    am.amSprint = shouldSprint || toggleSprint;
                 }
 
                 //set jump & sneak

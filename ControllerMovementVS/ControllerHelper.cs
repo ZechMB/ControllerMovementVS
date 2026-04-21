@@ -8,13 +8,14 @@ namespace ControllerMovementVS
     internal static class ControllerHelper
     {
         //ideas:
-        //chat message for (dis)connects and battery low
+        //chat message for (dis)connects and battery low //capi.ShowChatMessage("Hello");
         //button face labels per controller type
         //button rebinding translations
         //axis as button
         //touchpad as mouse
         //support multiple gamepads
         //support joysticks
+        //haptic feedback (on damage?)
 
         internal static uint[]? gamepads;
         public static List<string> gamepadNames = [];

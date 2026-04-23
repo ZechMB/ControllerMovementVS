@@ -2,6 +2,7 @@
 using SDL3;
 using System.Collections.Generic;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using static ControllerMovementVS.config.BindingHelper;
 
 namespace ControllerMovementVS
@@ -18,6 +19,7 @@ namespace ControllerMovementVS
         //support joysticks
         //haptic feedback (on damage?)
 
+        const string modid = "controllermovementvs";
         internal static uint[]? gamepads;
         public static List<string> gamepadNames = [];
         internal static short leftX = 0;
@@ -67,8 +69,8 @@ namespace ControllerMovementVS
                 SetGamepad(am, numofgps - 1);
                 if (am.gamepad is not null)
                 {
-                    string message = "switching to new gamepad named: '" + SDL.GetGamepadName((nint)am.gamepad) + "' type: '" + SDL.GetGamepadType((nint)am.gamepad) + "'";
-                    mod.Mod.Logger.Notification(message);
+                    mod.Mod.Logger.Notification("Switching to new gamepad named: '{0}' of type: '{1}'", SDL.GetGamepadName((nint)am.gamepad), SDL.GetGamepadType((nint)am.gamepad).ToString());
+                    string message = Lang.Get($"{modid}:SwitchingGamepad", SDL.GetGamepadName((nint)am.gamepad), SDL.GetGamepadType((nint)am.gamepad).ToString());
                     mod.capi?.ShowChatMessage(message);
                     mod.Mod.Logger.Chat(message);
                 }
@@ -129,9 +131,9 @@ namespace ControllerMovementVS
                         else if (e.Type == (uint)SDL.EventType.JoystickBatteryUpdated && e.JDevice.Which == SDL.GetJoystickID(SDL.GetGamepadJoystick((nint)am.gamepad)))
                         {
                             var batt = e.JBattery.Percent;
-                            if (batt <= 30 && batt % 5 == 0)
+                            if (batt <= 30 && batt % 5 == 0 && e.JBattery.State == SDL.PowerState.OnBattery)
                             {
-                                string message = "Controller battery is " + batt + "%.";
+                                string message = Lang.Get($"{modid}:ControllerBatteryIs", batt);
                                 mod.capi?.ShowChatMessage(message);
                                 mod.Mod.Logger.Chat(message);
                             }
@@ -146,8 +148,8 @@ namespace ControllerMovementVS
                     }
                     else if (e.Type == (uint)SDL.EventType.GamepadRemoved)
                     {
-                        string message = "gamepad removed";
-                        mod.Mod.Logger.Warning(message);
+                        mod.Mod.Logger.Warning("gamepad removed");
+                        string message = Lang.Get($"{modid}:GamepadDisconnected");
                         mod.capi?.ShowChatMessage(message);
                         mod.Mod.Logger.Chat(message);
                         SetupNewGamePad(am, mod);

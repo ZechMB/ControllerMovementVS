@@ -125,6 +125,17 @@ namespace ControllerMovementVS
                                 }
                             }
                         }
+                        //low battery messages
+                        else if (e.Type == (uint)SDL.EventType.JoystickBatteryUpdated && e.JDevice.Which == SDL.GetJoystickID(SDL.GetGamepadJoystick((nint)am.gamepad)))
+                        {
+                            var batt = e.JBattery.Percent;
+                            if (batt <= 30 && batt % 5 == 0)
+                            {
+                                string message = "Controller battery is " + batt + "%.";
+                                mod.capi?.ShowChatMessage(message);
+                                mod.Mod.Logger.Chat(message);
+                            }
+                        }
                     }
 
                     //other events
@@ -140,11 +151,6 @@ namespace ControllerMovementVS
                         mod.capi?.ShowChatMessage(message);
                         mod.Mod.Logger.Chat(message);
                         SetupNewGamePad(am, mod);
-                    }
-                    else if (e.Type == (uint)SDL.EventType.JoystickBatteryUpdated)
-                    {
-                        var hi = e.JBattery;
-                        var he = e.JDevice;
                     }
                     else if (e.Type == (uint)SDL.EventType.Quit)
                     {

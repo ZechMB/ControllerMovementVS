@@ -1,4 +1,5 @@
-﻿using SDL3;
+﻿using ImGuizmoNET;
+using SDL3;
 using System.Collections.Generic;
 using Vintagestory.API.Common;
 using static ControllerMovementVS.config.BindingHelper;
@@ -58,7 +59,7 @@ namespace ControllerMovementVS
         }
 
         //sets newly connected gamepads as the one we want to use
-        internal static void SetupNewGamePad(AnalogMovement am, ModSystem ms)
+        internal static void SetupNewGamePad(AnalogMovement am, ControllerMovementVSModSystem mod)
         {
             int numofgps = GetGamepads();
             if (numofgps > 0 && gamepads is not null)
@@ -66,7 +67,10 @@ namespace ControllerMovementVS
                 SetGamepad(am, numofgps - 1);
                 if (am.gamepad is not null)
                 {
-                    ms.Mod.Logger.Notification("switching to new gamepad named: '" + SDL.GetGamepadName((nint)am.gamepad) + "' type: '" + SDL.GetGamepadType((nint)am.gamepad) + "'");
+                    string message = "switching to new gamepad named: '" + SDL.GetGamepadName((nint)am.gamepad) + "' type: '" + SDL.GetGamepadType((nint)am.gamepad) + "'";
+                    mod.Mod.Logger.Notification(message);
+                    mod.capi?.ShowChatMessage(message);
+                    mod.Mod.Logger.Chat(message);
                 }
             }            
         }
@@ -131,8 +135,16 @@ namespace ControllerMovementVS
                     }
                     else if (e.Type == (uint)SDL.EventType.GamepadRemoved)
                     {
-                        mod.Mod.Logger.Warning("gamepad removed");
+                        string message = "gamepad removed";
+                        mod.Mod.Logger.Warning(message);
+                        mod.capi?.ShowChatMessage(message);
+                        mod.Mod.Logger.Chat(message);
                         SetupNewGamePad(am, mod);
+                    }
+                    else if (e.Type == (uint)SDL.EventType.JoystickBatteryUpdated)
+                    {
+                        var hi = e.JBattery;
+                        var he = e.JDevice;
                     }
                     else if (e.Type == (uint)SDL.EventType.Quit)
                     {

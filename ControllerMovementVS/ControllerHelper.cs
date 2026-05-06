@@ -108,7 +108,6 @@ namespace ControllerMovementVS
                                         var binding = CurrentBindings[i];
                                         binding.Activated = true;
                                         CurrentBindings[i] = binding;
-                                        break;
                                     }
                                 }
                             }
@@ -123,7 +122,6 @@ namespace ControllerMovementVS
                                     var binding = CurrentBindings[i];
                                     binding.Activated = false;
                                     CurrentBindings[i] = binding;
-                                    break;
                                 }
                             }
                         }

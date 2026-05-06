@@ -10,7 +10,7 @@ namespace ControllerMovementVS
     internal static class ControllerHelper
     {
         //ideas:
-        //chat message for (dis)connects and battery low //capi.ShowChatMessage("Hello");
+        //trigger emulates rmb/lmb
         //button face labels per controller type
         //button rebinding translations
         //axis as button

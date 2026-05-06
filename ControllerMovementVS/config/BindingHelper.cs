@@ -15,7 +15,7 @@ namespace ControllerMovementVS.config
         }
 
         internal static List<Binding> DefaultBindings = [("Jump", SDL.GamepadButton.South), ("Sneak", SDL.GamepadButton.Invalid), ("ToggleSneak", SDL.GamepadButton.RightStick),
-            ("Sprint", SDL.GamepadButton.Invalid), ("ToggleSprint", SDL.GamepadButton.Invalid)];
+            ("Sprint", SDL.GamepadButton.Invalid), ("ToggleSprint", SDL.GamepadButton.Invalid), ("LeftMouse", SDL.GamepadButton.Invalid), ("RightMouse", SDL.GamepadButton.Invalid)];
         internal static List<Binding> CurrentBindings = [];
 
         static void LoadDefaultBindings()

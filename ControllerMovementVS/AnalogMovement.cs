@@ -2,7 +2,9 @@
 using ControllerMovementVS.config;
 using System;
 using Vintagestory.API.Client;
+using Vintagestory.API.Common;
 using Vintagestory.Client;
+using Vintagestory.Client.NoObf;
 
 namespace ControllerMovementVS
 {
@@ -126,6 +128,10 @@ namespace ControllerMovementVS
                     }
                 }
                 am.amSneak = shouldSneak || toggleSneak;
+
+                //mouse click
+                if (BindingHelper.IsBindValid("LeftMouse")) am.LeftMouse = BindingHelper.GetActivated("LeftMouse");
+                if (BindingHelper.IsBindValid("RightMouse")) am.LeftMouse = BindingHelper.GetActivated("RightMouse");
             }
         }
 

@@ -131,7 +131,7 @@ namespace ControllerMovementVS
 
                 //mouse click
                 if (BindingHelper.IsBindValid("LeftMouse")) am.LeftMouse = BindingHelper.GetActivated("LeftMouse");
-                if (BindingHelper.IsBindValid("RightMouse")) am.LeftMouse = BindingHelper.GetActivated("RightMouse");
+                if (BindingHelper.IsBindValid("RightMouse")) am.RightMouse = BindingHelper.GetActivated("RightMouse");
             }
         }
 

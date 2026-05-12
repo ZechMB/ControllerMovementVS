@@ -94,10 +94,13 @@ namespace ControllerMovementVS.config
             ImGui.SeparatorText("Button Rebindings");
             if (ImGui.BeginTable("rebind table", 4, ImGuiTableFlags.NoSavedSettings | ImGuiTableFlags.Borders))
             {
+                //table header
                 ImGui.TableNextRow(); ImGui.TableNextColumn(); ImGui.Text("Action:");
                 ImGui.TableNextColumn(); ImGui.Text("Button:");
                 ImGui.TableNextColumn(); //bind
                 ImGui.TableNextColumn(); //unbind
+
+                //table data
                 var bindings = BindingHelper.CurrentBindings;
                 for (int i = 0; i < rebinding.Count; i++)
                 {
@@ -107,7 +110,8 @@ namespace ControllerMovementVS.config
                     ImGui.Text(bindings[i].ControlName);
                     ImGui.TableNextColumn();
                     string buttName = bindings[i].GamepadButton.ToString();
-                    if (bindings[i].GamepadButton == SDL3.SDL.GamepadButton.Invalid) buttName = ""; //ignore invalids and put a blank
+                    if (mod.am?.gamepad is not null) buttName = bindings[i].GetButtonName((nint)mod.am.gamepad);
+                    //if (bindings[i].GamepadButton == unchecked((byte)-1)) buttName = ""; //ignore invalids and put a blank
                     ImGui.Text(buttName);
                     ImGui.TableNextColumn();
                     bool temp = rebinding[i];

@@ -10,9 +10,12 @@ namespace ControllerMovementVS
     internal static class ControllerHelper
     {
         //ideas:
-        //trigger emulates rmb/lmb
-        //button face labels per controller type
+        //config for trigger activation zone
+        //remove activated from saved config
         //button rebinding translations
+        //
+        //unplanned:
+        //inventory and pickblock actions
         //axis as button
         //touchpad as mouse
         //support multiple gamepads
@@ -26,6 +29,8 @@ namespace ControllerMovementVS
         internal static short leftY = 0;
         internal static short rightX = 0;
         internal static short rightY = 0;
+        internal static short triggerR = 0;
+        internal static short triggerL = 0;
 
         internal static int GetGamepads()
         {
@@ -77,6 +82,19 @@ namespace ControllerMovementVS
             }            
         }
 
+        private static void SetButtonActivated(int button, bool activated = true)
+        {
+            for (int i = 0; i < CurrentBindings.Count; i++)
+            {
+                if (CurrentBindings[i].GamepadButton == button)
+                {
+                    var binding = CurrentBindings[i];
+                    binding.Activated = activated;
+                    CurrentBindings[i] = binding;
+                }
+            }
+        }
+
 
         //get all sdl events
         internal static void PollEvents(AnalogMovement am, ControllerMovementVSModSystem mod, bool IsInitialized)
@@ -94,36 +112,43 @@ namespace ControllerMovementVS
                             else if (e.GAxis.Axis == (byte)SDL.GamepadAxis.LeftY) leftY = e.GAxis.Value;
                             else if (e.GAxis.Axis == (byte)SDL.GamepadAxis.RightX) rightX = e.GAxis.Value;
                             else if (e.GAxis.Axis == (byte)SDL.GamepadAxis.RightY) rightY = e.GAxis.Value;
+                            else if (e.GAxis.Axis == (byte)SDL.GamepadAxis.LeftTrigger)
+                            {
+                                triggerL = e.GAxis.Value;
+                                if (triggerL == 0)
+                                {
+                                    SetButtonActivated(50, false);
+                                }
+                                else if (triggerL > 0)
+                                {
+                                    if (IsRebinding) FinalizeRebind(50);
+                                    else SetButtonActivated(50);
+                                }
+                            }
+                            else if (e.GAxis.Axis == (byte)SDL.GamepadAxis.RightTrigger)
+                            {
+                                triggerR = e.GAxis.Value;
+                                if (triggerR == 0)
+                                {
+                                    SetButtonActivated(51, false);
+                                }
+                                else if (triggerR > 0)
+                                {
+                                    if (IsRebinding) FinalizeRebind(51);
+                                    else SetButtonActivated(51);
+                                }
+                            }
                         }
                         //button down
                         else if (e.Type == (uint)SDL.EventType.GamepadButtonDown && e.GButton.Which == SDL.GetJoystickID(SDL.GetGamepadJoystick((nint)am.gamepad)))
                         {
-                            if (IsRebinding) FinalizeRebind(e.GButton);
-                            else
-                            {
-                                for (int i = 0; i < CurrentBindings.Count; i++)
-                                {
-                                    if ((byte)CurrentBindings[i].GamepadButton == e.GButton.Button)
-                                    {
-                                        var binding = CurrentBindings[i];
-                                        binding.Activated = true;
-                                        CurrentBindings[i] = binding;
-                                    }
-                                }
-                            }
+                            if (IsRebinding) FinalizeRebind(e.GButton.Button);
+                            else SetButtonActivated(e.GButton.Button);
                         }
                         //button up
                         else if (e.Type == (uint)SDL.EventType.GamepadButtonUp && e.GDevice.Which == SDL.GetJoystickID(SDL.GetGamepadJoystick((nint)am.gamepad)))
                         {
-                            for (int i = 0; i < CurrentBindings.Count; i++)
-                            {
-                                if (CurrentBindings[i].GamepadButton == (SDL.GamepadButton)e.GButton.Button)
-                                {
-                                    var binding = CurrentBindings[i];
-                                    binding.Activated = false;
-                                    CurrentBindings[i] = binding;
-                                }
-                            }
+                            SetButtonActivated(e.GButton.Button, false);
                         }
                         //low battery messages
                         else if (e.Type == (uint)SDL.EventType.JoystickBatteryUpdated && e.JDevice.Which == SDL.GetJoystickID(SDL.GetGamepadJoystick((nint)am.gamepad)))
@@ -138,7 +163,7 @@ namespace ControllerMovementVS
                         }
                     }
 
-                    //other events
+                    //other events not related to the current gamepad
                     if (e.Type == (uint)SDL.EventType.GamepadAdded && IsInitialized)
                     {
                         mod.Mod.Logger.Notification("gamepad added");

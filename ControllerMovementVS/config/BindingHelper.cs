@@ -5,17 +5,36 @@ namespace ControllerMovementVS.config
 {
     public static class BindingHelper
     {
-        public struct Binding(string ControlName, SDL.GamepadButton GamepadButton)
+        public struct Binding(string ControlName, int GamepadButton)
         {
+            //the action this bind represents
             public string ControlName = ControlName;
-            public SDL.GamepadButton GamepadButton = GamepadButton;
+            //the int of the SDL.GamepadButton or 50/51 for trigger L/R
+            public int GamepadButton = GamepadButton;
+            //if button is currently pressed
             public bool Activated = false;
 
-            public static implicit operator Binding((string, SDL.GamepadButton) v) => new(v.Item1, v.Item2);
+            public static implicit operator Binding((string, SDL.GamepadButton) v) => new(v.Item1, (int)v.Item2);
+            public static implicit operator Binding((string, int) v) => new(v.Item1, v.Item2);
+
+            public readonly string GetButtonName(nint gamepad)
+            {
+                if (GamepadButton == -1) return "";
+                else if (GamepadButton == 50) return "Left Trigger";
+                else if (GamepadButton == 51) return "Right Trigger";
+
+                var button = (SDL.GamepadButton)GamepadButton;
+                if (button == SDL.GamepadButton.South || button == SDL.GamepadButton.North || button == SDL.GamepadButton.West || button == SDL.GamepadButton.East)
+                {
+                    var temp = SDL.GetGamepadButtonLabel(gamepad, button).ToString();
+                    return button.ToString() + " (" + temp + ")"; //'South (A)'
+                }
+                return button.ToString();
+            }
         }
 
         internal static List<Binding> DefaultBindings = [("Jump", SDL.GamepadButton.South), ("Sneak", SDL.GamepadButton.Invalid), ("ToggleSneak", SDL.GamepadButton.RightStick),
-            ("Sprint", SDL.GamepadButton.Invalid), ("ToggleSprint", SDL.GamepadButton.Invalid), ("LeftMouse", SDL.GamepadButton.Invalid), ("RightMouse", SDL.GamepadButton.Invalid)];
+            ("Sprint", SDL.GamepadButton.LeftStick), ("ToggleSprint", SDL.GamepadButton.Invalid), ("LeftMouse", 51), ("RightMouse", 50)];
         internal static List<Binding> CurrentBindings = [];
 
         static void LoadDefaultBindings()
@@ -72,15 +91,15 @@ namespace ControllerMovementVS.config
             IsRebinding = false;
         }
 
-        internal static void FinalizeRebind(SDL.GamepadButtonEvent button)
+        internal static void FinalizeRebind(byte button)
         {
             if (!IsRebinding) return;
             if (CurrentBindings.Count >= indexOfRebinding)
             {
                 string name = CurrentBindings[indexOfRebinding].ControlName;
                 CurrentBindings.RemoveAt(indexOfRebinding);
-                CurrentBindings.Insert(indexOfRebinding, new Binding(name, (SDL.GamepadButton)button.Button));
-                if (clhelper is not null) clhelper.rebinding[indexOfRebinding] = false;
+                CurrentBindings.Insert(indexOfRebinding, new Binding(name, button));
+                clhelper?.rebinding[indexOfRebinding] = false;
             }
             IsRebinding = false;
         }
@@ -91,7 +110,7 @@ namespace ControllerMovementVS.config
             {
                 string name = CurrentBindings[IndexToUnbind].ControlName;
                 CurrentBindings.RemoveAt(IndexToUnbind);
-                CurrentBindings.Insert(IndexToUnbind, new Binding(name, SDL.GamepadButton.Invalid));
+                CurrentBindings.Insert(IndexToUnbind, new Binding(name, (int)SDL.GamepadButton.Invalid));
             }
         }
 
@@ -105,7 +124,7 @@ namespace ControllerMovementVS.config
         internal static bool IsBindValid(string ActionName)
         {
             int index = CurrentBindings.FindIndex(b => b.ControlName == ActionName);
-            if (index != -1 && CurrentBindings[index].GamepadButton != SDL.GamepadButton.Invalid)
+            if (index != -1 && CurrentBindings[index].GamepadButton != unchecked((byte)SDL.GamepadButton.Invalid))
             {
                 return true;
             }

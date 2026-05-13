@@ -10,7 +10,6 @@ namespace ControllerMovementVS
     internal static class ControllerHelper
     {
         //ideas:
-        //config for trigger activation zone
         //remove activated from saved config
         //button rebinding translations
         //
@@ -108,6 +107,8 @@ namespace ControllerMovementVS
                         //axes
                         if (e.Type == (uint)SDL.EventType.GamepadAxisMotion && e.GAxis.Which == SDL.GetJoystickID(SDL.GetGamepadJoystick((nint)am.gamepad)))
                         {
+                            float triggerActivationDepth = 1;
+                            if (am.mod.config is not null) triggerActivationDepth = 32767 * am.mod.config.TriggerActivationDepth + 1;
                             if (e.GAxis.Axis == (byte)SDL.GamepadAxis.LeftX) leftX = e.GAxis.Value;
                             else if (e.GAxis.Axis == (byte)SDL.GamepadAxis.LeftY) leftY = e.GAxis.Value;
                             else if (e.GAxis.Axis == (byte)SDL.GamepadAxis.RightX) rightX = e.GAxis.Value;
@@ -115,11 +116,11 @@ namespace ControllerMovementVS
                             else if (e.GAxis.Axis == (byte)SDL.GamepadAxis.LeftTrigger)
                             {
                                 triggerL = e.GAxis.Value;
-                                if (triggerL == 0)
+                                if (triggerL < triggerActivationDepth)
                                 {
                                     SetButtonActivated(50, false);
                                 }
-                                else if (triggerL > 0)
+                                else if (triggerL >= triggerActivationDepth)
                                 {
                                     if (IsRebinding) FinalizeRebind(50);
                                     else SetButtonActivated(50);
@@ -128,11 +129,11 @@ namespace ControllerMovementVS
                             else if (e.GAxis.Axis == (byte)SDL.GamepadAxis.RightTrigger)
                             {
                                 triggerR = e.GAxis.Value;
-                                if (triggerR == 0)
+                                if (triggerR < triggerActivationDepth)
                                 {
                                     SetButtonActivated(51, false);
                                 }
-                                else if (triggerR > 0)
+                                else if (triggerR >= triggerActivationDepth)
                                 {
                                     if (IsRebinding) FinalizeRebind(51);
                                     else SetButtonActivated(51);

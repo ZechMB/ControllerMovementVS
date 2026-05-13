@@ -6,6 +6,8 @@ namespace ControllerMovementVS.config
     {
         //(0 to 1) wont move/look if moving stick less than deadzone
         public float DeadZone = 0.15f;
+        //(0 to 1)trigger will activate as a button if pressed this far
+        public float TriggerActivationDepth = 0.15f;
         //turn off camera controls if you are using another method
         public bool LookUsingRightStick = true;
         //change look to left stick and move to right stick

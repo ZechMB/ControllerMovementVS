@@ -35,6 +35,7 @@ namespace ControllerMovementVS.config
         bool autoSprint = true;
         bool autoStopToggleSprint = true;
         float deadzone = 0f;
+        float triggerActivationDepth = 0f;
         bool lookUsingRightStick = false;
         bool swapLeftRightSticks = false;
         float lookSensitivityHorizontal = 0f;
@@ -91,6 +92,10 @@ namespace ControllerMovementVS.config
             ImGui.Checkbox(Lang.Get($"{modid}:AutoStopToggleSprint"), ref autoStopToggleSprint);
             ImGui.SetItemTooltip(Lang.Get($"{modid}:AutoStopToggleSprintToolTip"));
 
+            ImGui.SeparatorText(Lang.Get($"{modid}:TriggerSettings"));
+            ImGui.SliderFloat(Lang.Get($"{modid}:TriggerActivationDepth"), ref triggerActivationDepth, 0f, 1f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
+            ImGui.SetItemTooltip(Lang.Get($"{modid}:TriggerActivationDepthToolTip"));
+
             ImGui.SeparatorText("Button Rebindings");
             if (ImGui.BeginTable("rebind table", 4, ImGuiTableFlags.NoSavedSettings | ImGuiTableFlags.Borders))
             {
@@ -109,10 +114,9 @@ namespace ControllerMovementVS.config
                     ImGui.TableNextColumn();
                     ImGui.Text(bindings[i].ControlName);
                     ImGui.TableNextColumn();
-                    string buttName = bindings[i].GamepadButton.ToString();
-                    if (mod.am?.gamepad is not null) buttName = bindings[i].GetButtonName((nint)mod.am.gamepad);
-                    //if (bindings[i].GamepadButton == unchecked((byte)-1)) buttName = ""; //ignore invalids and put a blank
-                    ImGui.Text(buttName);
+                    string buttonName = bindings[i].GamepadButton.ToString();
+                    if (mod.am?.gamepad is not null) buttonName = bindings[i].GetButtonName((nint)mod.am.gamepad);
+                    ImGui.Text(buttonName);
                     ImGui.TableNextColumn();
                     bool temp = rebinding[i];
                     ImGui.Selectable(temp ? "Press a button to bind..." : "Rebind", ref temp);
@@ -201,6 +205,7 @@ namespace ControllerMovementVS.config
                 mod.config.AutoStopToggleSprint = autoStopToggleSprint;
                 mod.config.GamepadIndex = gamepadSelectedIdx;
                 mod.config.DeadZone = deadzone;
+                mod.config.TriggerActivationDepth = triggerActivationDepth;
                 mod.config.LookUsingRightStick = lookUsingRightStick;
                 mod.config.SwapLeftRightSticks = swapLeftRightSticks;
                 mod.config.LookSensitivityHorizontal = lookSensitivityHorizontal;
@@ -217,6 +222,7 @@ namespace ControllerMovementVS.config
                 autoSprint = mod.config.AutoSprint;
                 autoStopToggleSprint = mod.config.AutoStopToggleSprint;
                 deadzone = mod.config.DeadZone;
+                triggerActivationDepth = mod.config.TriggerActivationDepth;
                 gamepadSelectedIdx = mod.config.GamepadIndex;
                 lookUsingRightStick = mod.config.LookUsingRightStick;
                 swapLeftRightSticks = mod.config.SwapLeftRightSticks;
